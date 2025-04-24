@@ -99,7 +99,8 @@
             background: white;
             border-radius: 15px;
             box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
-            flex: 75%;
+            flex: 60%;
+            min-width: 0;
         }
 
         .上传标题 {
@@ -150,22 +151,23 @@
             margin-top: 20px;
             background: #f8f9fa;
             border-radius: 8px;
-            overflow: auto;
             position: relative;
         }
 
         /* PDF内容容器 */
         .pdf-content-container {
-            width: fit-content;
-            min-width: 100%;
+            width: 100% !important;
+            /* 覆盖fit-content */
             padding: 20px 0;
         }
 
         .pdf-page-canvas {
-            width: 100% !important;
-            /* 宽度自适应 */
-            height: auto !important;
-            /* 高度自动 */
+            object-fit: contain;
+            /* 保持比例填充容器 */
+            max-width: 100%;
+            max-height: 100%;
+            transition: transform 0.3s;
+            /* 添加平滑过渡效果 */
             display: block;
             margin: 0 auto 15px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -222,6 +224,8 @@
             /* 默认隐藏 */
             position: relative;
             overflow-y: auto;
+            overflow-x: hidden !important;
+            /* 禁用横向滚动 */
             padding: 15px;
             background: #fff;
         }
@@ -239,7 +243,7 @@
         /* 右侧侧边栏 */
         .right-sidebar {
             height: 460px;
-            flex: 25%;
+            flex: 40%;
             background: #f8faff;
             padding: 30px 20px;
             border-left: 1px solid #e0f5ff;
@@ -470,11 +474,11 @@
 
                         <!-- PDF预览区域 -->
                         <div class="pdf-preview-wrapper" id="pdfPreview">
+                            <div class="pdf-loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>正在加载文档...</span>
+                            </div>
                             <div class="pdf-content-container" id="pdfContent">
-                                <div class="pdf-loading">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                    <span>正在加载文档...</span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -583,10 +587,12 @@
         async function handleFile(file) {
             // 添加状态类
             pdfContainer.classList.add('has-file');
+            const container = document.getElementById('pdfPreview');
+            const loadingElement = document.querySelector('#pdfPreview .pdf-loading');
 
             try {
                 // 显示加载状态
-                document.querySelector('.pdf-loading').style.display = 'flex';
+                loadingElement.style.display = 'flex'; // 显示加载提示
 
                 // 渲染PDF
                 const arrayBuffer = await file.arrayBuffer();
@@ -594,10 +600,13 @@
                 const page = await pdf.getPage(1);
 
                 // 创建画布
-                const viewport = page.getViewport({ scale: 1.5 });
+                const viewport = page.getViewport({ scale: 1 });
+                const containerWidth = container.clientWidth;
+                const scale = containerWidth / viewport.width;
+                const scaledViewport = page.getViewport({ scale });
                 const canvas = document.createElement('canvas');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+                canvas.height = scaledViewport.height;
+                canvas.width = scaledViewport.width;
 
                 // 渲染
                 await page.render({
@@ -614,41 +623,47 @@
                 alert(`文件加载失败: ${error.message}`);
                 pdfContainer.classList.remove('has-file');
             } finally {
-                document.querySelector('.pdf-loading').style.display = 'none';
+                loadingElement.style.display = 'none'; // 确保隐藏
             }
         }
-        async function renderPDF(page) {
-            const container = document.getElementById('pdfPreview');
-            const contentContainer = document.getElementById('pdfContent');
-            
-            // 清空容器
-            contentContainer.innerHTML = '';
+        // async function renderPDF(page) {
+        //     const container = document.getElementById('pdfPreview');
+        //     const contentContainer = document.getElementById('pdfContent');
 
-            // 获取容器可用宽度
-            const containerWidth = container.clientWidth - 30; // 留出滚动条宽度
+        //     // 清空容器
+        //     contentContainer.innerHTML = '';
 
-            // 计算适合宽度的缩放比例
-            const viewport = page.getViewport({ scale: 1 });
-            const scale = containerWidth / viewport.width;
-            const scaledViewport = page.getViewport({ scale });
+        //     const containerWidth = container.clientWidth; // 自动排除滚动条宽度
 
-            // 创建画布
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.height = scaledViewport.height;
-            canvas.width = scaledViewport.width;
-            canvas.className = 'pdf-page-canvas';
+        //     // 获取 PDF 原始尺寸
+        //     const viewport = page.getViewport({ scale: 1 });
 
-            // 渲染页面
-            await page.render({
-                canvasContext: context,
-                viewport: scaledViewport
-            }).promise;
+        //     // 计算精确缩放比例（保留 1px 安全边距）
+        //     const scale = (containerWidth - 1) / viewport.width;
 
-            // 添加画布到容器
-            contentContainer.appendChild(canvas);
-        }
-        
+        //     // 应用缩放
+        //     const scaledViewport = page.getViewport({ scale });
+
+
+
+        //     // 创建画布
+        //     const canvas = document.createElement('canvas');
+        //     const context = canvas.getContext('2d');
+        //     canvas.height = scaledViewport.height;
+        //     canvas.width = scaledViewport.width;
+        //     console.log(canvas.width)
+        //     canvas.className = 'pdf-page-canvas';
+
+        //     // 渲染页面
+        //     await page.render({
+        //         canvasContext: context,
+        //         viewport: scaledViewport
+        //     }).promise;
+
+        //     // 添加画布到容器
+        //     contentContainer.appendChild(canvas);
+        // }
+
     </script>
 </body>
 
