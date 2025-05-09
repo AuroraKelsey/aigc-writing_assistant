@@ -123,15 +123,98 @@
             border-color: #00bfff;
             box-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
         }
-
-        /* 参数设置面板 */
+        /* 参数面板升级版 */
         .param-panel {
             width: 320px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 191, 255, 0.1);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 191, 255, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .panel-title {
+            color: #008fb3;
+            font-size: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .param-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .param-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .param-header i {
+            color: #00bfff;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* 下拉菜单样式 */
+        .style-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(248, 252, 255, 0.8);
+            transition: all 0.3s;
+        }
+
+        /* 比例按钮组 */
+        .ratio-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .ratio-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(248, 252, 255, 0.8);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .ratio-btn.active {
+            background: #00bfff;
+            color: white;
+            border-color: transparent;
+        }
+
+        /* 颜色选择器 */
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .color-picker input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(0, 191, 255, 0.3);
+            border-radius: 8px;
+            padding: 3px;
+            cursor: pointer;
+        }
+
+        .color-hex {
+            color: #666;
+            font-family: monospace;
+            font-size: 14px;
         }
 
         /* 生成按钮 */
@@ -164,54 +247,76 @@
             padding: 20px;
         }
 
-        /* 艺术卡片 */
-        .art-card {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 191, 255, 0.1);
-            transition: all 0.3s;
-            position: relative;
-            cursor: pointer;
+        /* 画廊网格调整 */
+        .gallery-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 20px;
         }
 
-        .art-card:hover {
-            transform: translateY(-10px);
+        /* 正方形图片容器 */
+        .square-image {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 保持1:1比例 */
+            overflow: hidden;
         }
 
         .art-image {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 320px;
+            height: 100%;
             object-fit: cover;
-            border-bottom: 2px solid rgba(0, 191, 255, 0.1);
+            transition: transform 0.3s ease;
         }
 
+        /* 卡片细节优化 */
         .art-details {
-            padding: 20px;
-            background: linear-gradient(to bottom, rgba(248, 252, 255, 0.9), white);
+            padding: 15px;
+            position: relative;
         }
 
-        /* 加载动画 */
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 3px solid #00bfff;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
+        .art-details h4 {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 6px;
         }
 
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
+        .art-details p {
+            color: #7f8c8d;
+            font-size: 13px;
+            line-height: 1.4;
         }
 
-        /* 响应式设计 */
-        @media (max-width: 1024px) {
-            .creation-area {
-                flex-direction: column;
+        /* 徽章样式 */
+        .badge {
+            position: absolute;
+            top: -12px;
+            right: 15px;
+            background: #00bfff;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            box-shadow: 0 2px 8px rgba(0, 191, 255, 0.2);
+        }
+
+        /* 悬停动画增强 */
+        .art-card:hover .art-image {
+            transform: scale(1.05);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
             }
-            .param-panel {
-                width: 100%;
+            
+            .art-details h4 {
+                font-size: 15px;
             }
         }
     </style>
@@ -261,29 +366,40 @@
 
             <!-- 参数面板 -->
             <div class="param-panel">
-                <h3>创作参数</h3>
+                <h3 class="panel-title">创作参数</h3>
+            
                 <div class="param-group">
-                    <label>艺术风格</label>
+                    <div class="param-header">
+                        <i class="fas fa-brush"></i>
+                        <label>艺术风格</label>
+                    </div>
                     <select class="style-select">
                         <option>水墨丹青</option>
                         <option>数字油画</option>
                         <option>赛博朋克</option>
                     </select>
                 </div>
-                
+            
                 <div class="param-group">
-                    <label>画面比例</label>
+                    <div class="param-header">
+                        <i class="fas fa-crop-alt"></i>
+                        <label>画面比例</label>
+                    </div>
                     <div class="ratio-buttons">
                         <button class="ratio-btn active">16:9</button>
                         <button class="ratio-btn">1:1</button>
                         <button class="ratio-btn">3:4</button>
                     </div>
                 </div>
-
+            
                 <div class="param-group">
-                    <label>色彩倾向</label>
+                    <div class="param-header">
+                        <i class="fas fa-fill-drip"></i>
+                        <label>色彩倾向</label>
+                    </div>
                     <div class="color-picker">
                         <input type="color" value="#00bfff">
+                        <span class="color-hex">#00BFFF</span>
                     </div>
                 </div>
             </div>
@@ -291,12 +407,37 @@
 
         <!-- 作品展示区 -->
         <section class="gallery-grid">
-            <!-- 示例卡片 -->
+            <!-- 示例卡片 - 修改为3个1:1比例的卡片 -->
             <div class="art-card">
-                <img src="https://picsum.photos/400/500" class="art-image" alt="示例作品">
+                <div class="square-image">
+                    <img src="https://picsum.photos/300/300" class="art-image" alt="示例作品">
+                </div>
                 <div class="art-details">
                     <h4>江南春色</h4>
-                    <p>根据《忆江南》生成的水墨风格作品</p>
+                    <p>水墨风格创作</p>
+                    <div class="badge">热门作品</div>
+                </div>
+            </div>
+        
+            <div class="art-card">
+                <div class="square-image">
+                    <img src="https://picsum.photos/301/301" class="art-image" alt="示例作品">
+                </div>
+                <div class="art-details">
+                    <h4>未来都市</h4>
+                    <p>赛博朋克风格</p>
+                    <div class="badge">最新创作</div>
+                </div>
+            </div>
+        
+            <div class="art-card">
+                <div class="square-image">
+                    <img src="https://picsum.photos/302/302" class="art-image" alt="示例作品">
+                </div>
+                <div class="art-details">
+                    <h4>星空幻想</h4>
+                    <p>数字油画创作</p>
+                    <div class="badge">编辑推荐</div>
                 </div>
             </div>
         </section>
@@ -339,3 +480,15 @@
     </script>
 </body>
 </html>
+<!-- 模型：
+
+1.图像生成模型：如扩散模型（Diffusion Model）、生成对抗网络（GAN）、变分自编码器（VAE）等。这些模型可以根据输入的文本描述生成对应的图像。例如，根据用户输入的诗歌或文章段落，生成符合
+“水墨丹青”、“数字油画”、“赛博朋克” 等艺术风格的图像。
+2.图像风格转换模型：例如，基于卷积神经网络（CNN）的风格迁移模型，如 CycleGAN、StyleGAN 等。这些模型可以将一种风格应用到图像上，实现不同风格的转换。
+
+算法：
+
+1.文本理解算法：自然语言处理（NLP）技术，如词嵌入（Word Embedding）、Transformer 架构等，用于理解用户输入的文本内容，提取关键信息和语义特征。
+2.图像生成算法：基于上述模型的算法，如扩散模型的采样算法、GAN 的对抗训练算法等，用于生成符合用户需求的图像。
+3.颜色选择和调整算法：根据用户选择的颜色，调整生成图像的色彩倾向。可以使用颜色空间转换算法，如 RGB 到 HSV 的转换，以及颜色混合算法。
+4.图像比例调整算法：根据用户选择的比例（如 16:9、1:1、3:4），对生成的图像进行裁剪或缩放处理。 -->
