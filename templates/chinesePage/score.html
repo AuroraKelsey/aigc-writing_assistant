@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蓝心少年 - AI写作助手</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: '微软雅黑', sans-serif;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #00bfff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s;
+            display: inline-block;
+            flex: 1;
+        }
+
+        .nav-links a.highlight {
+            color: #00bfff;
+            font-weight: 600;
+        }
+
+        .nav-left {
+            flex: 50%;
+            display: flex;
+        }
+
+        .nav-left {
+            flex: 50%;
+        }
+
+        /* main内容区（包含侧边栏和核心功能） */
+        .main-content {
+            min-height: calc(100vh - 60px);
+            padding: 80px 60px;
+            background: linear-gradient(135deg, #e0f5ff, #f0f9ff);
+        }
+
+
+
+        .核心标题 {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .核心标题 h2 {
+            font-size: 32px;
+            color: #007bff;
+        }
+
+        .核心标题 p {
+            font-size: 18px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .wrting-area {
+            display: flex;
+            padding: 80px 60px;
+            background: linear-gradient(135deg, #f5fcff, #ffffff);
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+        }
+
+
+        /* 文件上传区 */
+        .文件上传区 {
+            height: 460px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+            flex: 60%;
+            min-width: 0;
+        }
+
+        .上传标题 {
+            height: 30px;
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .上传容器 {
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .上传按钮 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 25px;
+            background: #00bfff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .上传按钮:hover {
+            transform: scale(1.03);
+        }
+
+        .已选文件 {
+            font-size: 14px;
+            color: #666;
+            padding: 10px 20px;
+            background: #f8faff;
+            border-radius: 10px;
+        }
+
+        /* 新增PDF显示容器样式 */
+        .pdf-preview-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        /* PDF内容容器 */
+        .pdf-content-container {
+            width: 100% !important;
+            /* 覆盖fit-content */
+            padding: 20px 0;
+        }
+
+        .pdf-page-canvas {
+            object-fit: contain;
+            /* 保持比例填充容器 */
+            max-width: 100%;
+            max-height: 100%;
+            transition: transform 0.3s;
+            /* 添加平滑过渡效果 */
+            display: block;
+            margin: 0 auto 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 新增PDF容器样式 */
+        .pdf-upload-container {
+            width: 100%;
+            height: 400px !important;
+            /* 保持与文件上传区原高度一致 */
+            border: 2px dashed #00bfff;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 默认上传提示样式 */
+        .upload-prompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            transition: opacity 0.3s;
+        }
+
+        /* 上传按钮视觉优化 */
+        .upload-label {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            padding: 25px 40px;
+            background: rgba(0, 191, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .upload-label i {
+            font-size: 32px;
+            color: #00bfff;
+        }
+
+        .upload-label-text {
+            font-size: 18px;
+            color: #333;
+        }
+
+        /* PDF预览容器 */
+        .pdf-preview-wrapper {
+            width: 100%;
+            height: 100%;
+            display: none;
+            /* 默认隐藏 */
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden !important;
+            /* 禁用横向滚动 */
+            padding: 15px;
+            background: #fff;
+        }
+
+        /* 当有文件时隐藏上传提示 */
+        .has-file .upload-prompt {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .has-file .pdf-preview-wrapper {
+            display: block;
+        }
+
+        /* 右侧侧边栏 */
+        .right-sidebar {
+            height: 460px;
+            flex: 40%;
+            background: #f8faff;
+            padding: 30px 20px;
+            border-left: 1px solid #e0f5ff;
+            position: sticky;
+            top: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+        }
+
+
+        .功能模块标题 {
+            font-size: 18px;
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .功能模块按钮 a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            background: white;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #333;
+            box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+
+        .功能模块按钮 a:hover,
+        .功能模块按钮 a.active {
+            transform: translateX(5px);
+            box-shadow: 0 6px 18px rgba(0, 191, 255, 0.2);
+            color: #00bfff;
+        }
+
+        .模块图标 {
+            font-size: 24px;
+        }
+
+        /* 示例对比区 */
+        .示例对比区 {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+            margin-bottom: 60px;
+        }
+
+        .对比标题 {
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .对比左右 {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .原文,
+        .修改后 {
+            flex-basis: 48%;
+            padding: 25px;
+            border-radius: 10px;
+            line-height: 1.8;
+        }
+
+        .原文 {
+            background: #fff5f5;
+            border: 1px solid #ffe6e6;
+        }
+
+        .修改后 {
+            background: #f5fff5;
+            border: 1px solid #e6ffe6;
+        }
+
+        /* 用户故事区（独立于功能区，放在main最后） */
+        .user-stories {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            padding: 0 20px;
+        }
+
+        .story-title {
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 40px;
+        }
+
+        .story-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f8faff;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .student-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .story-text {
+            font-size: 16px;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        /* 底部信息栏 */
+        .footer {
+            background: #00bfff;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .footer-links {
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .footer p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+                padding: 40px 20px;
+            }
+
+            .right-sidebar {
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto 30px;
+                border-right: none;
+                position: static;
+            }
+
+            .功能-content {
+                margin-left: 0;
+            }
+
+            .对比左右 {
+                flex-direction: column;
+            }
+
+            .原文,
+            .修改后 {
+                flex-basis: 100%;
+                margin-top: 20px;
+            }
+        }
+
+        /* 新增评分样式 */
+        .right-sidebar {
+            height: 460px;
+            /* 保持原始高度限制 */
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            /* 减少内边距 */
+        }
+
+        .score-header {
+            background: linear-gradient(135deg, #00bfff, #0066cc);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .score-display {
+            margin-bottom: 15px;
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .score-scale {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+
+        .scale-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .scale-bar .progress {
+            position: absolute;
+            left: 0;
+            height: 100%;
+            background: #ffd700;
+            border-radius: 2px;
+        }
+
+        .rating-details {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .rating-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .rating-category {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .rating-category i {
+            width: 20px;
+            color: #00bfff;
+        }
+
+        .rating-score {
+            margin-left: auto;
+            font-weight: 600;
+            color: #00bfff;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00bfff, #0066cc);
+            transition: width 0.5s ease;
+        }
+
+        .feedback-section h4 {
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feedback-section h4 i {
+            color: #00bfff;
+        }
+
+        .feedback-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feedback-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .feedback-list li:before {
+            content: "•";
+            color: #00bfff;
+            position: absolute;
+            left: 0;
+            font-size: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .score-number {
+                font-size: 40px;
+            }
+
+            .rating-category {
+                font-size: 14px;
+            }
+        }
+    </style>
+    <!-- 引入PDF.js库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+</head>
+
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-pen-nib"></i>
+                蓝心少年
+            </div>
+            <nav class="nav-links">
+                <div class="nav-left">
+                    <a href="#">首页</a>
+                    <a href="#" class="highlight">中文页面</a>
+                    <a href="#">英文页面</a>
+                    <a href="#">素材库</a>
+                </div>
+                <div class="nav-right">
+                    <a href="#" class="highlight">登录/注册</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主体内容区（main标签包含核心功能） -->
+    <main class="main-content">
+        <!-- 主体功能区（文件上传+对比区） -->
+        <div class="功能-content">
+            <div class="核心标题">
+                <h2>AI助力，写作成长每一步</h2>
+                <p>无需注册，直接粘贴作文或上传文件即可体验专业级批改</p>
+            </div>
+
+            <div class="wrting-area">
+                <!-- 文件上传区 -->
+                <div class="文件上传区">
+                    <h3 class="上传标题">上传你的作文文件</h3>
+                    <div class="pdf-upload-container" id="pdfContainer">
+                        <!-- 上传提示 -->
+                        <div class="upload-prompt">
+                            <label class="upload-label" for="作文文件">
+                                <i class="fas fa-file-upload"></i>
+                                <div class="upload-label-text">点击选择或拖拽PDF文件</div>
+                            </label>
+                        </div>
+
+                        <!-- PDF预览区域 -->
+                        <div class="pdf-preview-wrapper" id="pdfPreview">
+                            <div class="pdf-loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>正在加载文档...</span>
+                            </div>
+                            <div class="pdf-content-container" id="pdfContent">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- 修改后的右侧侧边栏部分 -->
+                <div class="right-sidebar">
+                    <div class="score-header">
+                        <div class="score-display">
+                            <div class="score-number">86</div>
+                            <div class="score-label">综合得分</div>
+                        </div>
+                        <div class="score-scale">
+                            <span>优秀</span>
+                            <div class="scale-bar">
+                                <div class="progress" style="width: 70%"></div>
+                            </div>
+                            <span>基准线</span>
+                        </div>
+                    </div>
+                    <!-- 新增滚动容器 -->
+                    <div class="scroll-container">
+                        <div class="rating-details">
+                            <div class="rating-item">
+                                <div class="rating-category">
+                                    <i class="fas fa-book-open"></i>
+                                    内容结构
+                                    <span class="rating-score">40/50</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 80%"></div>
+                                </div>
+                            </div>
+
+                            <div class="rating-item">
+                                <div class="rating-category">
+                                    <i class="fas fa-pen-fancy"></i>
+                                    语言表达
+                                    <span class="rating-score">32/40</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 80%"></div>
+                                </div>
+                            </div>
+
+                            <div class="rating-item">
+                                <div class="rating-category">
+                                    <i class="fas fa-lightbulb"></i>
+                                    创新思维
+                                    <span class="rating-score">14/20</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- <div class="feedback-section">
+                            <h4><i class="fas fa-comment-dots"></i> 优化建议</h4>
+                            <ul class="feedback-list">
+                                <li>论证逻辑需要更紧密的因果衔接</li>
+                            </ul> 
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 示例对比区 -->
+            <div class="示例对比区">
+                <h3 class="对比标题">作文批改前后对比（示例）</h3>
+                <div class="对比左右">
+                    <div class="原文">
+                        <p>修改前：动物实验是不好的，我们应该保护动物。</p>
+                        <p class="问题说明">问题：表述简单，缺乏论证逻辑</p>
+                    </div>
+                    <div class="修改后">
+                        <p>修改后：从伦理视角审视，动物实验实质是对生命尊严的漠视，现代科技已为我们提供了更人道的替代方案。</p>
+                        <p class="优化说明">优化：增加伦理视角论证，使用“审视”“漠视”等高级词汇</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+
+    <!-- 底部信息栏 -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">隐私政策</a>
+            <a href="#">公益计划</a>
+            <a href="#">联系我们</a>
+            <a href="#">技术支持</a>
+        </div>
+        <p>© 2025 蓝心少年团队 | 免费服务中学生，助力教育公平</p>
+        <p>由蓝心科技与XX公益组织联合开发</p>
+    </footer>
+
+    <script>
+        // 侧边栏按钮激活
+        const sidebarBtns = document.querySelectorAll('.功能模块按钮 a');
+        sidebarBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                sidebarBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        const pdfContainer = document.getElementById('pdfContainer');
+        const 文件输入 = document.createElement('input');
+        文件输入.type = 'file';
+        文件输入.id = '作文文件';
+        文件输入.accept = 'application/pdf';
+        文件输入.hidden = true;
+
+        // 拖拽上传功能
+        pdfContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            pdfContainer.classList.add('dragover');
+        });
+
+        pdfContainer.addEventListener('dragleave', () => {
+            pdfContainer.classList.remove('dragover');
+        });
+
+        pdfContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            pdfContainer.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files[0]?.type === 'application/pdf') {
+                handleFile(files[0]);
+            }
+        });
+
+        // 点击上传
+        document.querySelector('.upload-label').addEventListener('click', () => {
+            文件输入.click();
+        });
+
+        // 文件选择处理
+        文件输入.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) handleFile(file);
+        });
+
+        async function handleFile(file) {
+            // 添加状态类
+            pdfContainer.classList.add('has-file');
+            const container = document.getElementById('pdfPreview');
+            const loadingElement = document.querySelector('#pdfPreview .pdf-loading');
+
+            try {
+                // 显示加载状态
+                loadingElement.style.display = 'flex'; // 显示加载提示
+
+                // 渲染PDF
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const page = await pdf.getPage(1);
+
+                // 创建画布
+                const viewport = page.getViewport({ scale: 1 });
+                const containerWidth = container.clientWidth;
+                const scale = containerWidth / viewport.width;
+                const scaledViewport = page.getViewport({ scale });
+                const canvas = document.createElement('canvas');
+                canvas.height = scaledViewport.height;
+                canvas.width = scaledViewport.width;
+
+                // 渲染
+                await page.render({
+                    canvasContext: canvas.getContext('2d'),
+                    viewport: viewport
+                }).promise;
+
+                // 插入预览
+                const preview = document.getElementById('pdfPreview');
+                preview.innerHTML = '';
+                preview.appendChild(canvas);
+
+            } catch (error) {
+                alert(`文件加载失败: ${error.message}`);
+                pdfContainer.classList.remove('has-file');
+            } finally {
+                loadingElement.style.display = 'none'; // 确保隐藏
+            }
+        }
+
+    </script>
+</body>
+
+</html>
