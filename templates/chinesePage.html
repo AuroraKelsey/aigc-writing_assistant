@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蓝心少年 - AI写作助手</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/chinesePage.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+</head>
+
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-pen-nib"></i>
+                蓝心少年
+            </div>
+            <nav class="nav-links">
+                <div class="nav-left">
+                    <a href="#">首页</a>
+                    <a href="#" class="highlight">中文页面</a>
+                    <a href="#">英文页面</a>
+                    <a href="#">素材库</a>
+                </div>
+                <div class="nav-right">
+                    <a href="#" class="highlight">登录/注册</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主体内容区 -->
+    <main class="main-content">
+        <!-- 主题标题 -->
+        <div class="main-title">
+            <h2>AI助力，写作成长每一步</h2>
+            <p>无需注册，直接粘贴作文或上传文件即可体验专业级批改</p>
+        </div>
+        <!-- 核心功能 -->
+        <div class="writing-area">
+            <!-- 文件上传区 -->
+            <div class="file-upload">
+                <h3>上传你的作文文件</h3>
+                <!-- 文件上传容器 -->
+                <div class="pdf-upload-container" id="pdfContainer">
+                    <!-- 上传提示 -->
+                    <div class="upload-prompt">
+                        <label class="upload-label" for="作文文件">
+                            <i class="fas fa-file-upload"></i>
+                            <div class="upload-label-text">点击选择或拖拽PDF文件</div>
+                        </label>
+                    </div>
+                    <!-- PDF预览区域 -->
+                    <div class="pdf-preview-wrapper" id="pdfPreview">
+                        <div class="pdf-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>正在加载文档...</span>
+                        </div>
+                        <div class="pdf-content-container" id="pdfContent">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 功能选择区 -->
+            <div class="fun-select">
+                <!-- 功能导航栏 -->
+                <div class="fun-nav">
+                    <div class="fun-mod">
+                        <a href="#ai-scoring" class="active" data-target="scoring">
+                            <span class="mod-icon"><i class="fas fa-star"></i></span>
+                            智能评分
+                        </a>
+                        <a href="#ai-reading" data-target="reading">
+                            <span class="mod-icon"><i class="fas fa-book-open"></i></span>
+                            读写共生
+                        </a>
+                        <a href="#ai-editing" data-target="editing">
+                            <span class="mod-icon"><i class="fas fa-magic"></i></span>
+                            动态润色
+                        </a>
+                    </div>
+                </div>
+                <!-- 功能子页面 -->
+                <div class="subpage-container">
+                    <!-- 智能评分 -->
+                    <div id="scoring" class="subpage active">
+                        <div class="score-header">
+                            <div class="score-display">
+                                <div class="score-number">86</div>
+                                <div class="score-label">综合得分</div>
+                            </div>
+                            <div class="score-scale">
+                                <span>优秀</span>
+                                <div class="scale-bar">
+                                    <div class="progress" style="width: 70%"></div>
+                                </div>
+                                <span>基准线</span>
+                            </div>
+                        </div>
+
+                        <div class="rating-details">
+                            <div class="rating-item">
+                                <div class="rating-category">
+                                    <i class="fas fa-book-open"></i>
+                                    内容结构
+                                    <span class="rating-score">40/50</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 80%"></div>
+                                </div>
+                            </div>
+
+                            <div class="rating-item">
+                                <div class="rating-category">
+                                    <i class="fas fa-pen-fancy"></i>
+                                    语言表达
+                                    <span class="rating-score">32/40</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 80%"></div>
+                                </div>
+                            </div>
+
+                            <div class="rating-item">
+                                <div class="rating-category">
+                                    <i class="fas fa-lightbulb"></i>
+                                    创新思维
+                                    <span class="rating-score">14/20</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- 读写共生 -->
+                    <div id="reading" class="subpage">
+                        <h3 class="reading-title"><i class="fas fa-book-open"></i> 推荐阅读书单</h3>
+                        <div class="book-list">
+                            <div class="book-item">
+                                <div class="book-hover">
+                                    <img src="../static/img/活着.png" alt="活着封面">
+                                    <div class="book-stars">⭐ 9.4</div>
+                                </div>
+                                <div class="book-info">
+                                    <h4>《活着》</h4>
+                                    <p class="book-author">余华 著</p>
+                                    <p class="book-description">一部充满人性光辉的生命史诗，学习如何用简洁文字表达深刻情感...</p>
+                                </div>
+                            </div>
+                            <div class="book-item">
+                                <div class="book-hover">
+                                    <img src="../static/img/平凡的世界.png" alt="平凡的世界封面">
+                                    <div class="book-stars">⭐ 9.4</div>
+                                </div>
+                                <div class="book-info">
+                                    <h4>《平凡的世界》</h4>
+                                    <p class="book-author">路遥 著</p>
+                                    <p class="book-description">一部充满人性光辉的生命史诗，学习如何用简洁文字表达深刻情感...</p>
+                                </div>
+                            </div>
+                            <div class="book-item">
+                                <div class="book-hover">
+                                    <img src="../static/img/红楼梦.png" alt="红楼梦封面">
+                                    <div class="book-stars">⭐ 9.4</div>
+                                </div>
+                                <div class="book-info">
+                                    <h4>《红楼梦》</h4>
+                                    <p class="book-author">曹雪芹 著</p>
+                                    <p class="book-description">一部反映封建社会末期的伟大小说，展现了丰富的人性和深刻的社会批判...</p>
+                                </div>
+                            </div>
+                            <div class="book-item">
+                                <div class="book-hover">
+                                    <img src="../static/img/围城.png" alt="围城封面">
+                                    <div class="book-stars">⭐ 9.4</div>
+                                </div>
+                                <div class="book-info">
+                                    <h4>《围城》</h4>
+                                    <p class="book-author">钱钟书 著</p>
+                                    <p class="book-description">一部揭示人性复杂的小说，通过围城的隐喻探讨了婚姻与社会的种种问题...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 动态润色 -->
+                    <div id="editing" class="subpage">
+                        <h3 class="edit-title">润色引擎</h3>
+                        <div class="edit-mod">
+                            <a href="#基础润色" class="active">
+                                <span class="mod-icon"><i class="fas fa-paint-brush"></i></span>
+                                基础润色
+                                <span class="hot-badge">推荐</span>
+                            </a>
+                            <a href="#句式优化">
+                                <span class="mod-icon"><i class="fas fa-project-diagram"></i></span>
+                                句式优化
+                                <span class="new-badge">NEW</span>
+                            </a>
+                            <div class="filter-group">
+                                <div class="filter-title">建议筛选：</div>
+                                <label class="filter-item">
+                                    <input type="checkbox" checked>
+                                    <i class="fas fa-spell-check"></i>
+                                    语法修正
+                                </label>
+                                <label class="filter-item">
+                                    <input type="checkbox" checked>
+                                    <i class="fas fa-bolt"></i>
+                                    表达升级
+                                </label>
+                                <label class="filter-item">
+                                    <input type="checkbox">
+                                    <i class="fas fa-shapes"></i>
+                                    修辞优化
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- 底部信息栏 -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">隐私政策</a>
+            <a href="#">公益计划</a>
+            <a href="#">联系我们</a>
+            <a href="#">技术支持</a>
+        </div>
+        <p>© 2025 蓝心少年团队 | 免费服务中学生，助力教育公平</p>
+        <p>由蓝心科技与XX公益组织联合开发</p>
+    </footer>
+    <script src="../static/js/chinesePage.js"></script>
+</body>
+
+</html>

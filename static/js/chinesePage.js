@@ -1,5 +1,5 @@
-// 侧边栏按钮激活
-const sidebarBtns = document.querySelectorAll('.功能模块按钮 a');
+/* 润色系统模块选择 */
+const sidebarBtns = document.querySelectorAll('.edit-mod a');
 sidebarBtns.forEach(btn => {
     btn.addEventListener('click', function () {
         sidebarBtns.forEach(b => b.classList.remove('active'));
@@ -7,12 +7,13 @@ sidebarBtns.forEach(btn => {
     });
 });
 
+/* PDF文件上传 */
 const pdfContainer = document.getElementById('pdfContainer');
-const 文件输入 = document.createElement('input');
-文件输入.type = 'file';
-文件输入.id = '作文文件';
-文件输入.accept = 'application/pdf';
-文件输入.hidden = true;
+const file = document.createElement('input');
+file.type = 'file';
+file.id = '作文文件';
+file.accept = 'application/pdf';
+file.hidden = true;
 
 // 拖拽上传功能
 pdfContainer.addEventListener('dragover', (e) => {
@@ -35,11 +36,11 @@ pdfContainer.addEventListener('drop', (e) => {
 
 // 点击上传
 document.querySelector('.upload-label').addEventListener('click', () => {
-    文件输入.click();
+    file.click();
 });
 
 // 文件选择处理
-文件输入.addEventListener('change', async (e) => {
+file.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (file) handleFile(file);
 });
@@ -86,3 +87,21 @@ async function handleFile(file) {
         loadingElement.style.display = 'none'; // 确保隐藏
     }
 }
+
+/* 子页面切换 */
+document.querySelectorAll('.fun-mod a').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // 切换按钮状态
+        document.querySelectorAll('.fun-mod a').forEach(b =>
+            b.classList.remove('active'));
+        this.classList.add('active');
+
+        // 切换子页面
+        const targetId = this.dataset.target;
+        document.querySelectorAll('.subpage').forEach(page =>
+            page.classList.remove('active'));
+        document.getElementById(targetId).classList.add('active');
+    });
+});
