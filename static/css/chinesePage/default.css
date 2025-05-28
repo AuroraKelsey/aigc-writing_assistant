@@ -1,0 +1,756 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "微软雅黑", sans-serif;
+}
+
+/* 顶部导航栏 */
+.header {
+  background: #f8f9fa;
+  padding: 15px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #00bfff;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: #333;
+  text-decoration: none;
+  font-size: 18px;
+  transition: color 0.3s;
+  display: inline-block;
+  flex: 1;
+}
+
+.nav-links a.highlight {
+  color: #00bfff;
+  font-weight: 600;
+}
+
+.nav-left {
+  flex: 50%;
+  display: flex;
+}
+
+.nav-left {
+  flex: 50%;
+}
+
+/* main内容区（包含侧边栏和核心功能） */
+.main-content {
+  min-height: calc(100vh - 60px);
+  padding: 80px 60px;
+  background: linear-gradient(135deg, #e0f5ff, #f0f9ff);
+}
+
+.核心标题 {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.核心标题 h2 {
+  font-size: 32px;
+  color: #007bff;
+}
+
+.核心标题 p {
+  font-size: 18px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.wrting-area {
+  display: flex;
+  padding: 30px 30px;
+  background: linear-gradient(135deg, #f5fcff, #ffffff);
+  border-radius: 30px;
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+}
+
+/* 文件上传区 */
+.文件上传区 {
+  height: 460px;
+  padding: 10px 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+  flex: 60%;
+  min-width: 0;
+}
+
+.上传标题 {
+  height: 30px;
+  text-align: center;
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.上传容器 {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.上传按钮 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 25px;
+  background: #00bfff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.上传按钮:hover {
+  transform: scale(1.03);
+}
+
+.已选文件 {
+  font-size: 14px;
+  color: #666;
+  padding: 10px 20px;
+  background: #f8faff;
+  border-radius: 10px;
+}
+
+/* 新增PDF显示容器样式 */
+.pdf-preview-container {
+  width: 100%;
+  height: 400px;
+  margin-top: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  position: relative;
+}
+
+/* PDF内容容器 */
+.pdf-content-container {
+  width: 100% !important;
+  /* 覆盖fit-content */
+  padding: 20px 0;
+}
+
+.pdf-page-canvas {
+  object-fit: contain;
+  /* 保持比例填充容器 */
+  max-width: 100%;
+  max-height: 100%;
+  transition: transform 0.3s;
+  /* 添加平滑过渡效果 */
+  display: block;
+  margin: 0 auto 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 新增PDF容器样式 */
+.pdf-upload-container {
+  width: 100%;
+  height: 400px !important;
+  /* 保持与文件上传区原高度一致 */
+  border: 2px dashed #00bfff;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 默认上传提示样式 */
+.upload-prompt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  transition: opacity 0.3s;
+}
+
+/* 上传按钮视觉优化 */
+.upload-label {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  padding: 25px 40px;
+  background: rgba(0, 191, 255, 0.05);
+  border-radius: 8px;
+}
+
+.upload-label i {
+  font-size: 32px;
+  color: #00bfff;
+}
+
+.upload-label-text {
+  font-size: 18px;
+  color: #333;
+}
+
+/* PDF预览容器 */
+.pdf-preview-wrapper {
+  width: 100%;
+  height: 100%;
+  display: none;
+  /* 默认隐藏 */
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden !important;
+  /* 禁用横向滚动 */
+  padding: 15px;
+  background: #fff;
+}
+
+/* 当有文件时隐藏上传提示 */
+.has-file .upload-prompt {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.has-file .pdf-preview-wrapper {
+  display: block;
+}
+
+/* 右侧侧边栏 */
+.right-sidebar {
+  height: 460px;
+  flex: 40%;
+  background: #f8faff;
+  padding: 5px 10px;
+  border-left: 1px solid #e0f5ff;
+  /* position: sticky; */
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+}
+
+.fun-nav {
+  background: transparent;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  /* padding: 1rem 0; */
+  height: 45px;
+}
+
+.fun-mod {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  gap: 0.5rem;
+  /* padding: 0 2rem; */
+  /* height: 60px; */
+}
+
+.fun-mod a {
+  /* margin: 20px 0; */
+  flex: 1;
+  background: white;
+  text-decoration: none;
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+  transition: transform 0.2s, box-shadow 0.3s;
+  padding: 0 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* border: 2px solid transparent; */
+}
+
+.fun-mod a:hover,
+.fun-mod a.active {
+  color: #00bfff;
+  background: #e3f2fd;
+  border-color: #00bfff;
+  border: 2px solid #00bfff;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 191, 255, 0.2);
+}
+
+.mod-icon {
+  font-size: 24px;
+}
+
+.subpage-container {
+  height: 395px;
+  padding: 15px;
+  background: #dfebf7;
+  border-radius: 12px;
+  position: relative;
+}
+/* 子页面容器 */
+.subpage {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease;
+  pointer-events: none;
+}
+
+.subpage.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* 示例对比区 */
+.示例对比区 {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+  margin-bottom: 60px;
+}
+
+.对比标题 {
+  text-align: center;
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.对比左右 {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.原文,
+.修改后 {
+  flex-basis: 48%;
+  padding: 25px;
+  border-radius: 10px;
+  line-height: 1.8;
+}
+
+.原文 {
+  background: #fff5f5;
+  border: 1px solid #ffe6e6;
+}
+
+.修改后 {
+  background: #f5fff5;
+  border: 1px solid #e6ffe6;
+}
+
+/* 用户故事区（独立于功能区，放在main最后） */
+.user-stories {
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  padding: 0 20px;
+}
+
+.story-title {
+  text-align: center;
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 40px;
+}
+
+.story-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: #f8faff;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.student-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.story-text {
+  font-size: 16px;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* 底部信息栏 */
+.footer {
+  background: #00bfff;
+  color: white;
+  text-align: center;
+  padding: 40px 20px;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.footer-links {
+  margin-bottom: 20px;
+}
+
+.footer-links a {
+  color: white;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.footer p {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-top: 10px;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .main-content {
+    flex-direction: column;
+    padding: 40px 20px;
+  }
+
+  .right-sidebar {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    border-right: none;
+    position: static;
+  }
+
+  .功能-content {
+    margin-left: 0;
+  }
+
+  .对比左右 {
+    flex-direction: column;
+  }
+
+  .原文,
+  .修改后 {
+    flex-basis: 100%;
+    margin-top: 20px;
+  }
+}
+.sub-features {
+  margin: 10px 0 15px 35px;
+  border-left: 2px solid #e0f5ff;
+  padding-left: 15px;
+}
+
+.sub-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  margin: 8px 0;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.sub-button:hover {
+  transform: translateX(3px);
+  box-shadow: 0 3px 8px rgba(0, 191, 255, 0.15);
+}
+
+/* 徽章样式 */
+.hot-badge {
+  background: #ff4757;
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+.new-badge {
+  background: #00bfff;
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+/* 筛选器组 */
+.filter-group {
+  border-top: 1px dashed #00bfff;
+  padding-top: 15px;
+  margin-top: 10px;
+}
+
+.filter-title {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+.filter-item:hover {
+  background: rgba(0, 191, 255, 0.05);
+}
+
+.filter-item input[type="checkbox"] {
+  accent-color: #00bfff;
+}
+
+/* 图标尺寸调整 */
+.sub-button i {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+.推荐标题 {
+  font-size: 20px;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f3f6;
+}
+
+.书籍推荐列表 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.书籍项 {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background: #f9fbfd;
+  border-radius: 10px;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.书籍项:hover {
+  transform: translateY(-3px);
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
+}
+
+.书籍封面 {
+  flex: 0 0 80px;
+  position: relative;
+}
+
+.书籍封面 img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.评分 {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.书籍信息 {
+  flex: 1;
+  min-width: 0;
+}
+
+.书籍信息 h4 {
+  color: #2c3e50;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+.作者 {
+  color: #7f8c8d;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.简介 {
+  color: #555;
+  font-size: 13px;
+  line-height: 1.5;
+  display: -webkit-box;
+  overflow: hidden;
+}
+
+.score-header {
+  background: linear-gradient(135deg, #00bfff, #0066cc);
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  text-align: center;
+}
+
+.score-display {
+  margin-bottom: 15px;
+}
+
+.score-number {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.score-scale {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  margin-top: 15px;
+}
+
+.scale-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  position: relative;
+}
+
+.scale-bar .progress {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  background: #ffd700;
+  border-radius: 2px;
+}
+
+.rating-details {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.rating-item {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.rating-category {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.rating-category i {
+  width: 20px;
+  color: #00bfff;
+}
+
+.rating-score {
+  margin-left: auto;
+  font-weight: 600;
+  color: #00bfff;
+}
+
+.progress-bar {
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar .progress {
+  height: 100%;
+  background: linear-gradient(90deg, #00bfff, #0066cc);
+  transition: width 0.5s ease;
+}
+
+.feedback-section h4 {
+  color: #333;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedback-section h4 i {
+  color: #00bfff;
+}
+
+.feedback-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.feedback-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.feedback-list li:before {
+  content: "•";
+  color: #00bfff;
+  position: absolute;
+  left: 0;
+  font-size: 16px;
+}
+
+@media (max-width: 1024px) {
+  .score-number {
+    font-size: 40px;
+  }
+
+  .rating-category {
+    font-size: 14px;
+  }
+}
