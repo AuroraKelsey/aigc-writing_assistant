@@ -1,107 +1,156 @@
-/* 润色系统模块选择 */
-const sidebarBtns = document.querySelectorAll('.edit-mod a');
-sidebarBtns.forEach(btn => {
-    btn.addEventListener('click', function () {
-        sidebarBtns.forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
+document.addEventListener('DOMContentLoaded', function () {
+    // 1. 移动端菜单切换
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    menuToggle.addEventListener('click', function () {
+        mobileMenu.classList.toggle('block');
     });
-});
 
-/* PDF文件上传 */
-const pdfContainer = document.getElementById('pdfContainer');
-const file = document.createElement('input');
-file.type = 'file';
-file.id = '作文文件';
-file.accept = 'application/pdf';
-file.hidden = true;
+    // 2. 功能标签页切换
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const subpages = document.querySelectorAll('.subpage');
 
-// 拖拽上传功能
-pdfContainer.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    pdfContainer.classList.add('dragover');
-});
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            // 移除所有按钮的活动状态
+            tabBtns.forEach(b => b.classList.remove('tab-active'));
+            // 隐藏所有子页面
+            subpages.forEach(page => page.classList.remove('block'));
 
-pdfContainer.addEventListener('dragleave', () => {
-    pdfContainer.classList.remove('dragover');
-});
+            // 添加当前按钮的活动状态
+            this.classList.add('tab-active');
 
-pdfContainer.addEventListener('drop', (e) => {
-    e.preventDefault();
-    pdfContainer.classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    if (files[0]?.type === 'application/pdf') {
-        handleFile(files[0]);
-    }
-});
+            // 显示目标子页面
+            const targetId = this.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('block');
+        });
+    });
 
-// 点击上传
-document.querySelector('.upload-label').addEventListener('click', () => {
-    file.click();
-});
+    // 3. PDF文件上传和预览功能
+    const pdfContainer = document.getElementById('pdfContainer');
+    const pdfPreview = document.getElementById('pdfPreview');
+    const pdfContentContainer = document.querySelector('.pdf-content-container');
+    const errorMessage = document.getElementById('errorMessage');
+    const uploadPrompt = document.querySelector('.upload-prompt');
 
-// 文件选择处理
-file.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (file) handleFile(file);
-});
-
-async function handleFile(file) {
-    // 添加状态类
-    pdfContainer.classList.add('has-file');
-    const container = document.getElementById('pdfPreview');
-    const loadingElement = document.querySelector('#pdfPreview .pdf-loading');
-
-    try {
-        // 显示加载状态
-        loadingElement.style.display = 'flex'; // 显示加载提示
-
-        // 渲染PDF
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        const page = await pdf.getPage(1);
-
-        // 创建画布
-        const viewport = page.getViewport({ scale: 1 });
-        const containerWidth = container.clientWidth;
-        const scale = containerWidth / viewport.width;
-        const scaledViewport = page.getViewport({ scale });
-        const canvas = document.createElement('canvas');
-        canvas.height = scaledViewport.height;
-        canvas.width = scaledViewport.width;
-
-        // 渲染
-        await page.render({
-            canvasContext: canvas.getContext('2d'),
-            viewport: viewport
-        }).promise;
-
-        // 插入预览
-        const preview = document.getElementById('pdfPreview');
-        preview.innerHTML = '';
-        preview.appendChild(canvas);
-
-    } catch (error) {
-        alert(`文件加载失败: ${error.message}`);
-        pdfContainer.classList.remove('has-file');
-    } finally {
-        loadingElement.style.display = 'none'; // 确保隐藏
-    }
-}
-
-/* 子页面切换 */
-document.querySelectorAll('.fun-mod a').forEach(btn => {
-    btn.addEventListener('click', function (e) {
+    // 支持拖放功能
+    pdfContainer.addEventListener('dragover', function (e) {
         e.preventDefault();
+        this.style.backgroundColor = '#e3f2fd';
+    });
 
-        // 切换按钮状态
-        document.querySelectorAll('.fun-mod a').forEach(b =>
-            b.classList.remove('active'));
-        this.classList.add('active');
+    pdfContainer.addEventListener('dragleave', function () {
+        this.style.backgroundColor = '';
+    });
 
-        // 切换子页面
-        const targetId = this.dataset.target;
-        document.querySelectorAll('.subpage').forEach(page =>
-            page.classList.remove('active'));
-        document.getElementById(targetId).classList.add('active');
+    pdfContainer.addEventListener('drop', function (e) {
+        e.preventDefault();
+        this.style.backgroundColor = '';
+        if (e.dataTransfer.files.length) {
+            handleFileUpload(e.dataTransfer.files[0]);
+        }
+    });
+
+    // 点击上传
+    pdfContainer.addEventListener('click', function () {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.pdf';
+        input.click();
+
+        input.addEventListener('change', function () {
+            if (this.files.length) {
+                handleFileUpload(this.files[0]);
+            }
+        });
+    });
+
+    // 文件处理函数
+    function handleFileUpload(file) {
+        if (file && file.type === 'application/pdf') {
+            errorMessage.style.display = 'none';
+
+            // 显示加载状态
+            pdfPreview.classList.add('block');
+            document.querySelector('.pdf-loading').style.display = 'flex';
+            pdfContentContainer.innerHTML = '';
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+
+                // 使用PDF.js加载PDF
+                pdfjsLib.getDocument({ data }).promise.then(function (pdf) {
+                    // 隐藏加载提示
+                    document.querySelector('.pdf-loading').style.display = 'none';
+
+                    // 隐藏上传提示
+                    uploadPrompt.style.display = 'none';
+
+                    // 加载第一页
+                    pdf.getPage(1).then(function (page) {
+                        // 设置缩放比例
+                        const containerWidth = pdfContainer.clientWidth - 60; // 减去padding
+                        const scale = containerWidth / page.getViewport({ scale: 1 }).width;
+                        const viewport = page.getViewport({ scale });
+
+                        // 创建画布
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        // 渲染PDF页面到canvas
+                        page.render({
+                            canvasContext: context,
+                            viewport: viewport
+                        }).promise.then(function () {
+                            pdfContentContainer.appendChild(canvas);
+                        });
+                    });
+                }).catch(function (error) {
+                    showError('无法加载PDF文件，请确保文件格式正确');
+                });
+            };
+
+            reader.onerror = function () {
+                showError('文件读取失败，请重试');
+            };
+
+            reader.readAsArrayBuffer(file);
+        } else {
+            showError('请选择有效的PDF文件');
+        }
+    }
+
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+
+        // 恢复上传提示
+        document.querySelector('.pdf-loading').style.display = 'none';
+        uploadPrompt.style.display = 'block';
+        pdfPreview.classList.remove('block');
+    }
+
+    // 4. 润色选项切换（如果后续需要）
+    const editOptions = document.querySelectorAll('.edit-option');
+    editOptions.forEach(option => {
+        option.addEventListener('click', function (e) {
+            e.preventDefault();
+            editOptions.forEach(o => o.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // 5. 筛选选项切换
+    const filterOptions = document.querySelectorAll('.filter-options input[type="checkbox"]');
+    filterOptions.forEach(option => {
+        option.addEventListener('change', function () {
+            // 这里可以添加筛选逻辑
+            console.log('筛选选项改变:', this.nextElementSibling.nextElementSibling.textContent, this.checked);
+        });
     });
 });
