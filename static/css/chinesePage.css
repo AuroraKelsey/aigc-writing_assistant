@@ -1,18 +1,18 @@
 /* 全局样式 */
 :root {
-  --primary: #1e88e5;
-  --primary-light: #64b5f6;
-  --primary-dark: #0d47a1;
-  --secondary: #ff7043;
-  --text-light: #f5f7fa;
-  --text-dark: #212121;
+  --primary: #351701; /* 深棕色 */
+  --primary-light: #d8bc96; /* 米色 */
+  --primary-dark: #5f2d0b; /* 深棕褐色 */
+  --secondary: #CD853F; /* 棕色 */
+  --text-light: #f9f9e4; /* 米色 */
+  --text-dark: #333333; /* 深灰色 */
   --border-radius: 12px;
   --shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
 }
 
 body {
-  background-color: #f8f9fa;
+  background-color: #dcd0ac; /* 浅黄色 */
   font-family: "Microsoft YaHei", sans-serif;
   margin: 0;
 }
@@ -42,7 +42,7 @@ header {
 }
 
 .logo i {
-  color: white;
+  color: var(--text-light);
   font-size: 24px;
   margin-right: 8px;
 }
@@ -50,11 +50,11 @@ header {
 .logo span {
   font-size: 20px;
   font-weight: bold;
-  color: white;
+  color: var(--text-light);
 }
 
 #menuToggle {
-  color: white;
+  color: var(--text-light);
   border: none;
   background: none;
   outline: none;
@@ -84,32 +84,32 @@ header {
 }
 
 .mobile-menu-container a {
-  color: #495057;
+  color: var(--text-dark);
   padding: 8px 0;
   text-decoration: none;
   transition: color 0.3s;
 }
 
 .mobile-menu-container a:hover {
-  color: #00bfff;
+  color: var(--secondary);
 }
 
 .mobile-menu-container a.text-primary {
-  color: #00bfff;
+  color: var(--secondary);
   font-weight: medium;
 }
 
 .mobile-menu-container a.bg-primary {
   background: linear-gradient(to right, var(--primary), var(--primary-light));
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  color: white;
+  color: var(--text-light);
   padding: 8px 16px;
   border-radius: 8px;
   text-align: center;
 }
 
 .mobile-menu-container a.bg-primary:hover {
-  background-color: #007bff;
+  background-color: var(--primary);
 }
 
 /* 主体内容区 */
@@ -144,7 +144,7 @@ main {
   padding: 28px;
   position: relative;
   overflow: hidden;
-  background-color: white;
+  background-color: var(--text-light);
   margin-bottom: 32px;
 }
 
@@ -166,7 +166,7 @@ main {
 .file-upload h3 {
   font-size: 18px;
   font-weight: semibold;
-  color: #212529;
+  color: var(--text-dark);
   margin-bottom: 16px;
 }
 
@@ -176,12 +176,12 @@ main {
   cursor: pointer;
   border: 2px dashed var(--primary-light);
   border-radius: var(--border-radius);
-  background: rgba(100, 181, 246, 0.05);
+  background: rgba(210, 180, 140, 0.05);
   transition: var(--transition);
 }
 
 #pdfContainer:hover {
-  background: rgba(100, 181, 246, 0.1);
+  background: rgba(210, 180, 140, 0.1);
   border-color: var(--primary);
 }
 
@@ -216,7 +216,7 @@ main {
 }
 
 .pdf-loading i {
-  color: #00bfff;
+  color: var(--secondary);
   font-size: 24px;
   margin-right: 8px;
   animation: spin 1s infinite linear;
@@ -279,25 +279,25 @@ main {
 }
 
 .function-nav button.tab-active {
-  border-bottom: 2px solid #00bfff;
+  border-bottom: 2px solid var(--secondary);
   font-weight: medium;
   background: linear-gradient(to right, var(--primary), var(--primary-light));
-  color: white;
-  box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+  color: var(--text-light);
+  box-shadow: 0 4px 12px rgba(140, 80, 20, 0.3);
 }
 
 .function-nav button:not(.tab-active) {
   color: #6c757d;
-  background: rgba(100, 181, 246, 0.15);
+  background: rgba(210, 180, 140, 0.15);
 }
 
 .function-nav button:hover:not(.tab-active) {
-  background: #64b5f640;
+  background: #D2B48C40;
   transform: translateY(-2px);
 }
 
 .glow {
-  box-shadow: 0 0 10px rgba(30, 136, 229, 0.3);
+  box-shadow: 0 0 10px rgba(140, 80, 20, 0.3);
 }
 
 /* 功能子页面 */
@@ -311,7 +311,7 @@ main {
 
 /* 智能评分 */
 .scoring-card {
-  background: linear-gradient(to right, #3b82f6, #1d4ed8);
+  background: linear-gradient(to right, #8B4513, #5C3317);
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 24px;
@@ -339,7 +339,7 @@ main {
 .score-number {
   font-size: 48px;
   font-weight: bold;
-  color: white;
+  color: var(--text-light);
 }
 
 .score-label {
@@ -353,7 +353,7 @@ main {
 .progress-label {
   display: flex;
   align-items: center;
-  color: white;
+  color: var(--text-light);
   font-size: 14px;
   margin-bottom: 8px;
 }
@@ -371,17 +371,17 @@ main {
 
 .progress-value {
   height: 100%;
-  background: linear-gradient(to right, #00bfff, #007bff);
+  background: linear-gradient(to right, #CD853F, #8B4513);
   border-radius: 9999px;
   transition: width 0.7s;
 }
 
 .progress-value.gradient-progress {
-  background: linear-gradient(to right, #4fc3f7, #e1f5fe);
+  background: linear-gradient(to right, #D2B48C, #fcfaf8);
 }
 
 .rating-item {
-  background-color: #f8f9fa;
+  background-color: var(--text-light);
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -405,7 +405,7 @@ main {
 }
 
 .rating-title i {
-  color: #00bfff;
+  color: var(--secondary);
   margin-right: 8px;
 }
 
@@ -415,7 +415,7 @@ main {
 
 .rating-score {
   font-weight: semibold;
-  color: #00bfff;
+  color: var(--secondary);
 }
 
 /* 读写共生 */
@@ -424,18 +424,18 @@ main {
   align-items: center;
   font-size: 18px;
   font-weight: semibold;
-  color: #212529;
+  color: var(--text-dark);
   margin-bottom: 16px;
 }
 
 .reading-title i {
-  color: #00bfff;
+  color: var(--secondary);
   margin-right: 8px;
 }
 
 .book-item {
   display: flex;
-  background-color: white;
+  background-color: var(--text-light);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -471,7 +471,7 @@ main {
 
 .book-info h4 {
   font-weight: semibold;
-  color: #212529;
+  color: var(--text-dark);
   margin-bottom: 4px;
 }
 
@@ -501,14 +501,14 @@ main {
 .edit-title {
   font-size: 18px;
   font-weight: semibold;
-  color: #212529;
+  color: var(--text-dark);
   margin-bottom: 16px;
 }
 
 .edit-option {
   display: flex;
   align-items: center;
-  background-color: white;
+  background-color: var(--text-light);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 16px;
@@ -524,14 +524,14 @@ main {
 }
 
 .edit-option i {
-  color: #00bfff;
+  color: var(--secondary);
   font-size: 24px;
   margin-right: 12px;
 }
 
 .edit-option span {
   display: inline-block;
-  background-color: #dc3545;
+  background-color: #917065;
   color: white;
   font-size: 12px;
   padding: 2px 8px;
@@ -540,7 +540,7 @@ main {
 }
 
 .edit-option span.bg-blue-500 {
-  background-color: #0d6efd;
+  background-color: #c4bfb7;
 }
 
 .edit-option.hover-effect {
@@ -554,12 +554,12 @@ main {
 }
 
 .filter-options.card-style {
-  background: rgba(100, 181, 246, 0.08);
+  background: rgba(210, 180, 140, 0.08);
   border-radius: var(--border-radius);
 }
 
 .filter-options {
-  background-color: #f8f9fa;
+  background-color: var(--text-light);
   border-radius: 8px;
   padding: 16px;
 }
@@ -580,14 +580,14 @@ main {
 }
 
 .filter-options i {
-  color: #00bfff;
+  color: var(--secondary);
   margin-right: 8px;
 }
 
 /* 底部信息栏 */
 footer {
-  background-color: #00bfff;
-  color: white;
+  background-color: var(--secondary);
+  color: var(--text-light);
   padding: 32px 0;
 }
 
@@ -606,7 +606,7 @@ footer {
 }
 
 .footer-links a {
-  color: white;
+  color: var(--text-light);
   text-decoration: none;
   transition: color 0.3s;
 }
@@ -634,7 +634,7 @@ footer.gradient-bg {
   left: 0;
   width: 0;
   height: 2px;
-  background: white;
+  background: var(--text-light);
   transition: width 0.3s;
 }
 
