@@ -1,3 +1,27 @@
+// 添加上传文件到后端的函数
+function uploadPdfToServer(file) {
+
+    const formData = new FormData();
+    formData.append('pdfFile', file);
+
+    fetch('/api/upload-pdf', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // 可以在这里处理后端返回的结果
+                console.log('服务器返回:', data);
+            } else {
+                console.log('服务器获取失败');
+            }
+        })
+        .catch(error => {
+            console.error('上传错误:', error);
+        });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // 1. 移动端菜单切换
     const menuToggle = document.getElementById('menuToggle');
@@ -108,6 +132,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             viewport: viewport
                         }).promise.then(function () {
                             pdfContentContainer.appendChild(canvas);
+                            // 渲染完成后上传文件到服务器
+                            uploadPdfToServer(file);
                         });
                     });
                 }).catch(function (error) {
@@ -154,3 +180,87 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+// chinesePage.js
+
+// 获取智能评分数据
+fetch('/api/scoring')
+    .then(response => response.json())
+    .then(data => {
+        // 更新综合得分
+        const scoreNumber = document.querySelector('.score-number');
+        scoreNumber.textContent = data.overall_score;
+
+        // 更新各项评分
+        const ratingItems = document.querySelectorAll('.rating-item');
+        data.ratings.forEach((rating, index) => {
+            const ratingTitle = ratingItems[index].querySelector('.rating-title span');
+            const ratingScore = ratingItems[index].querySelector('.rating-score');
+            const progressValue = ratingItems[index].querySelector('.progress-value');
+
+            ratingTitle.textContent = rating.title;
+            ratingScore.textContent = rating.score;
+            progressValue.style.width = `${rating.progress}%`;
+        });
+    })
+    .catch(error => console.error('Error fetching scoring data:', error));
+
+// 获取读写共生数据
+fetch('/api/reading')
+    .then(response => response.json())
+    .then(data => {
+        const bookList = document.querySelector('.book-list');
+        bookList.innerHTML = '';
+
+        data.forEach(book => {
+            const bookItem = document.createElement('div');
+            bookItem.classList.add('book-item', 'hover-effect');
+
+            const bookInfo = document.createElement('div');
+            bookInfo.classList.add('book-info');
+
+            const bookTitle = document.createElement('h4');
+            bookTitle.textContent = book.title;
+
+            const bookImage = document.createElement('img');
+            bookImage.src = book.image;
+
+            const bookAuthor = document.createElement('p');
+            bookAuthor.textContent = `${book.author} 著`;
+
+            const bookDescription = document.createElement('p');
+            bookDescription.textContent = book.description;
+
+            const bookRatingDiv = document.createElement('div');
+            bookRatingDiv.classList.add('book-rating');
+
+            const starRatingDiv = document.createElement('div');
+            const fullStars = Math.floor(book.rating);
+            const halfStar = book.rating % 1 >= 0.5;
+            for (let i = 0; i < fullStars; i++) {
+                const star = document.createElement('i');
+                star.classList.add('fas', 'fa-star');
+                starRatingDiv.appendChild(star);
+            }
+            if (halfStar) {
+                const halfStarIcon = document.createElement('i');
+                halfStarIcon.classList.add('fas', 'fa-star-half-alt');
+                starRatingDiv.appendChild(halfStarIcon);
+            }
+            const ratingText = document.createElement('span');
+            ratingText.textContent = book.rating;
+
+            bookRatingDiv.appendChild(starRatingDiv);
+            bookRatingDiv.appendChild(ratingText);
+
+            bookInfo.appendChild(bookTitle);
+            bookInfo.appendChild(bookImage);
+            bookInfo.appendChild(bookAuthor);
+            bookInfo.appendChild(bookDescription);
+            bookInfo.appendChild(bookRatingDiv);
+
+            bookItem.appendChild(bookInfo);
+            bookList.appendChild(bookItem);
+        });
+    })
+    .catch(error => console.error('Error fetching reading data:', error));

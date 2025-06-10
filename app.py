@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from chinesePage import chinese_page
 
 app = Flask(__name__)
 
@@ -6,9 +7,9 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/chinesePage')
-def chinesePage():
-    return render_template('chinesePage.html')
+# 注册诗词写作页面蓝图
+app.register_blueprint(chinese_page, url_prefix='/')
+
 
 @app.route('/englishPage')
 def englishPage():
