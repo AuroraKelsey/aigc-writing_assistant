@@ -1,27 +1,3 @@
-// 添加上传文件到后端的函数
-function uploadPdfToServer(file) {
-
-    const formData = new FormData();
-    formData.append('pdfFile', file);
-
-    fetch('/api/upload-pdf', {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // 可以在这里处理后端返回的结果
-                console.log('服务器返回:', data);
-            } else {
-                console.log('服务器获取失败');
-            }
-        })
-        .catch(error => {
-            console.error('上传错误:', error);
-        });
-}
-
 document.addEventListener('DOMContentLoaded', function () {
     // 1. 移动端菜单切换
     const menuToggle = document.getElementById('menuToggle');
@@ -51,116 +27,73 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 3. PDF文件上传和预览功能
-    const pdfContainer = document.getElementById('pdfContainer');
-    const pdfPreview = document.getElementById('pdfPreview');
-    const pdfContentContainer = document.querySelector('.pdf-content-container');
+    // 3. 诗词提交
+    // 获取诗词输入元素
+    const poemTitleInput = document.getElementById('poemTitle');
+    const poemContentInput = document.getElementById('poemContent');
+    const submitBtn = document.getElementById('submitPoem');
     const errorMessage = document.getElementById('errorMessage');
-    const uploadPrompt = document.querySelector('.upload-prompt');
-
-    // 支持拖放功能
-    pdfContainer.addEventListener('dragover', function (e) {
-        e.preventDefault();
-        this.style.backgroundColor = '#e3f2fd';
-    });
-
-    pdfContainer.addEventListener('dragleave', function () {
-        this.style.backgroundColor = '';
-    });
-
-    pdfContainer.addEventListener('drop', function (e) {
-        e.preventDefault();
-        this.style.backgroundColor = '';
-        if (e.dataTransfer.files.length) {
-            handleFileUpload(e.dataTransfer.files[0]);
+    
+    // 提交诗词处理
+    submitBtn.addEventListener('click', function() {
+        const title = poemTitleInput.value.trim();
+        const content = poemContentInput.value.trim();
+        
+        // 验证输入
+        if (!title) {
+            showError('请输入诗词题目');
+            return;
         }
+        
+        if (!content) {
+            showError('请输入诗词内容');
+            return;
+        }
+        
+        // 清除错误信息
+        errorMessage.style.display = 'none';
+        
+        // 显示加载状态
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 提交中...';
+        submitBtn.disabled = true;
+        
+        // 发送数据到服务器
+        submitPoemToServer(title, content);
     });
-
-    // 点击上传
-    pdfContainer.addEventListener('click', function () {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.pdf';
-        input.click();
-
-        input.addEventListener('change', function () {
-            if (this.files.length) {
-                handleFileUpload(this.files[0]);
+    
+    // 发送诗词到服务器
+    function submitPoemToServer(title, content) {
+        fetch('/api/submit-poem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: title,
+                content: content
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // 成功后更新UI
+                console.log(data);
+            } else {
+                showError(data.message || '提交失败');
             }
+        })
+        .catch(error => {
+            console.error('提交错误:', error);
+            showError('网络请求失败');
+        })
+        .finally(() => {
+            // 恢复按钮状态
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 提交诗词';
+            submitBtn.disabled = false;
         });
-    });
-
-    // 文件处理函数
-    function handleFileUpload(file) {
-        if (file && file.type === 'application/pdf') {
-            errorMessage.style.display = 'none';
-
-            // 显示加载状态
-            pdfPreview.classList.add('block');
-            document.querySelector('.pdf-loading').style.display = 'flex';
-            pdfContentContainer.innerHTML = '';
-
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                const data = new Uint8Array(e.target.result);
-
-                // 使用PDF.js加载PDF
-                pdfjsLib.getDocument({ data }).promise.then(function (pdf) {
-                    // 隐藏加载提示
-                    document.querySelector('.pdf-loading').style.display = 'none';
-
-                    // 隐藏上传提示
-                    uploadPrompt.style.display = 'none';
-
-                    // 加载第一页
-                    pdf.getPage(1).then(function (page) {
-                        // 设置缩放比例
-                        const containerWidth = pdfContainer.clientWidth - 60; // 减去padding
-                        const scale = containerWidth / page.getViewport({ scale: 1 }).width;
-                        const viewport = page.getViewport({ scale });
-
-                        // 创建画布
-                        const canvas = document.createElement('canvas');
-                        const context = canvas.getContext('2d');
-                        canvas.height = viewport.height;
-                        canvas.width = viewport.width;
-
-                        // 渲染PDF页面到canvas
-                        page.render({
-                            canvasContext: context,
-                            viewport: viewport
-                        }).promise.then(function () {
-                            pdfContentContainer.appendChild(canvas);
-                            // 渲染完成后上传文件到服务器
-                            uploadPdfToServer(file);
-                        });
-                    });
-                }).catch(function (error) {
-                    showError('无法加载PDF文件，请确保文件格式正确');
-                });
-            };
-
-            reader.onerror = function () {
-                showError('文件读取失败，请重试');
-            };
-
-            reader.readAsArrayBuffer(file);
-        } else {
-            showError('请选择有效的PDF文件');
-        }
     }
 
-    function showError(message) {
-        errorMessage.textContent = message;
-        errorMessage.style.display = 'block';
-
-        // 恢复上传提示
-        document.querySelector('.pdf-loading').style.display = 'none';
-        uploadPrompt.style.display = 'block';
-        pdfPreview.classList.remove('block');
-    }
-
+    
     // 4. 润色选项切换（如果后续需要）
     const editOptions = document.querySelectorAll('.edit-option');
     editOptions.forEach(option => {

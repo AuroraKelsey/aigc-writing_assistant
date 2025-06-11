@@ -159,98 +159,77 @@ main {
 }
 
 /* 文件上传区 */
-.file-upload {
-  margin-bottom: 32px;
+/* 添加新的诗词输入区样式 */
+.poem-input {
+    margin-bottom: 32px;
 }
 
-.file-upload h3 {
-  font-size: 18px;
-  font-weight: semibold;
-  color: var(--text-dark);
-  margin-bottom: 16px;
+.poem-input h3 {
+    font-size: 18px;
+    font-weight: semibold;
+    color: var(--text-dark);
+    margin-bottom: 16px;
 }
 
-#pdfContainer {
-  padding: 32px;
-  text-align: center;
-  cursor: pointer;
-  border: 2px dashed var(--primary-light);
-  border-radius: var(--border-radius);
-  background: rgba(210, 180, 140, 0.05);
-  transition: var(--transition);
+.input-group {
+    margin-bottom: 16px;
 }
 
-#pdfContainer:hover {
-  background: rgba(210, 180, 140, 0.1);
-  border-color: var(--primary);
+.input-group label {
+    font-weight: medium;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+    display: block;
 }
 
-.upload-prompt i {
-  color: var(--primary);
-  font-size: 52px;
-  transition: transform 0.3s;
-  margin-bottom: 12px;
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    background-color: white;
+    font-family: inherit;
+    font-size: 16px;
+    box-sizing: border-box;
 }
 
-#pdfContainer:hover .upload-prompt i {
-  transform: translateY(-5px);
+.input-group textarea {
+    resize: vertical;
 }
 
-.upload-prompt p {
-  color: #6c757d;
+.input-group input:focus,
+.input-group textarea:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 2px rgba(205, 133, 63, 0.2);
 }
 
-#pdfPreview {
-  display: none;
+.submit-btn {
+    background: linear-gradient(to right, var(--primary), var(--primary-light));
+    color: var(--text-light);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 8px;
 }
 
-#pdfPreview.block {
-  display: block;
+.submit-btn:hover {
+    background: linear-gradient(to right, var(--primary-dark), var(--primary));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.pdf-loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 0;
+.submit-btn i {
+    margin-right: 8px;
 }
-
-.pdf-loading i {
-  color: var(--secondary);
-  font-size: 24px;
-  margin-right: 8px;
-  animation: spin 1s infinite linear;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.pdf-loading span {
-  color: #6c757d;
-}
-
-.pdf-content-container {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.pdf-content-container canvas {
-  display: block;
-  margin: 0 auto 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 /* 功能选择区 */
 .function-nav {
   border-bottom: 1px solid #dee2e6;

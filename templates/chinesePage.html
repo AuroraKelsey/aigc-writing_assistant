@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../static/css/chinesePage.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    
+
 </head>
 
 <body>
@@ -43,24 +43,23 @@
         </div>
         <!-- 核心功能区 -->
         <div class="core-feature">
-            <!-- 文件上传区 -->
-            <div class="file-upload">
-                <h3>上传你的诗词作品</h3>
-                <!-- 文件上传容器 -->
-                <div id="pdfContainer">
-                    <div class="upload-prompt">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>点击选择或拖拽PDF文件</p>
-                    </div>
-                    <!-- PDF预览区域 -->
-                    <div class="pdf-preview-wrapper" id="pdfPreview">
-                        <div class="pdf-loading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <span>正在加载文档...</span>
-                        </div>
-                        <div class="pdf-content-container"></div>
-                    </div>
+            <!-- 修改为诗词输入区 -->
+            <div class="poem-input">
+                <h3>输入诗词作品</h3>
+                <!-- 诗词题目输入框 -->
+                <div class="input-group">
+                    <label for="poemTitle">诗词题目</label>
+                    <input type="text" id="poemTitle" placeholder="请输入诗词题目">
                 </div>
+                <!-- 诗词内容输入框 -->
+                <div class="input-group">
+                    <label for="poemContent">诗词内容</label>
+                    <textarea id="poemContent" rows="8" placeholder="请输入诗词内容"></textarea>
+                </div>
+                <!-- 提交按钮 -->
+                <button id="submitPoem" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> 提交诗词
+                </button>
                 <div class="error-message" id="errorMessage"></div>
             </div>
             <!-- 功能选择区 -->
@@ -145,7 +144,6 @@
                             <i class="fas fa-book-open"></i> 推荐阅读诗文
                         </h3>
                         <div class="book-list">
-                            
                         </div>
                     </div>
                     <!-- 动态润色 -->

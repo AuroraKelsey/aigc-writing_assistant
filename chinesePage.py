@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, jsonify, request
 import json
 import os
-from werkzeug.utils import secure_filename
+import datetime
 
 # 创建蓝图
 chinese_page = Blueprint(
@@ -13,58 +13,53 @@ chinese_page = Blueprint(
 data_dir = os.path.join(os.path.dirname(__file__), "data")
 os.makedirs(data_dir, exist_ok=True)
 
-# 配置上传文件夹
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+# chinese_page.py
+# 在已有代码基础上添加以下路由
 
-# 允许的文件扩展名
-ALLOWED_EXTENSIONS = {"pdf"}
-
-
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-# 文件上传路由
-@chinese_page.route("/api/upload-pdf", methods=["POST"])
-def upload_pdf():
-    # 检查请求中是否包含文件
-    if "pdfFile" not in request.files:
-        return jsonify({"success": False, "message": "没有文件部分"}), 400
-
-    file = request.files["pdfFile"]
-
-    # 检查文件名
-    if file.filename == "":
-        return jsonify({"success": False, "message": "未选择文件"}), 400
-
-    # 检查文件类型
-    if not allowed_file(file.filename):
-        return (
-            jsonify({"success": False, "message": "不允许的文件类型，只允许PDF文件"}),
-            400,
-        )
-
-    # 安全处理文件名
-    filename = secure_filename(file.filename)
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
-
-    # 保存文件
-    file.save(file_path)
-
-    # 这里可以添加对PDF文件的处理逻辑
-    # 例如提取文本、生成预览图等
-
-    return jsonify(
-        {
-            "success": True,
-            "message": "文件上传成功",
-            "filename": filename,
-            "file_path": file_path,
+# 路由：接收诗词提交
+@chinese_page.route("/api/submit-poem", methods=["POST"])
+def submit_poem():
+    try:
+        # 获取前端提交的JSON数据
+        data = request.get_json()
+        
+        # 获取诗词题目和内容
+        title = data.get("title")
+        content = data.get("content")
+        
+        # 验证数据是否存在
+        if not title or not content:
+            return jsonify({
+                "success": False,
+                "message": "诗词题目和内容不能为空"
+            }), 400
+        
+        # 保存数据到文件（实际应用中应存储到数据库）
+        poem_data = {
+            "title": title,
+            "content": content,
+            "timestamp": datetime.datetime.now().isoformat()
         }
-    )
-
+        
+        file_path = os.path.join(data_dir, f"{title.replace(' ', '_')}.json")
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(poem_data, f, ensure_ascii=False, indent=2)
+        
+        # 返回成功响应
+        return jsonify({
+            "success": True,
+            "message": "诗词提交成功",
+            "data": {
+                "title": title,
+                "preview": content[:50] + "..." if len(content) > 50 else content
+            }
+        })
+    
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"服务器错误: {str(e)}"
+        }), 500
 
 # 路由：返回中文学习页面
 @chinese_page.route("/chinesePage")
@@ -77,9 +72,9 @@ def index():
 def get_scoring_data():
     # 这里可以从数据库或文件中读取数据
     scoring_data = {
-        "overall_score": 86,
+        "overall_score": 84,
         "ratings": [
-            {"title": "整体结构", "score": "40/50", "progress": 80},
+            {"title": "整体结构", "score": "38/50", "progress": 80},
             {"title": "语言表达", "score": "32/40", "progress": 80},
             {"title": "意境呈现", "score": "14/20", "progress": 70},
         ],
@@ -123,32 +118,3 @@ def get_reading_data():
         },
     ]
     return jsonify(reading_data)
-
-
-# 路由：提交作文评分
-@chinese_page.route("/api/submit_essay", methods=["POST"])
-def submit_essay():
-    data = request.json
-    essay_content = data.get("content", "")
-
-    import random
-
-    score = random.randint(60, 100)
-
-    # 保存作文内容
-    essay_id = f"essay_{random.randint(1000, 9999)}"
-    essay_file = os.path.join(data_dir, f"{essay_id}.json")
-    with open(essay_file, "w", encoding="utf-8") as f:
-        json.dump(
-            {
-                "id": essay_id,
-                "content": essay_content,
-                "timestamp": data.get("timestamp"),
-                "score": score,
-            },
-            f,
-            ensure_ascii=False,
-            indent=2,
-        )
-
-    return jsonify({"success": True, "essay_id": essay_id, "score": score})
