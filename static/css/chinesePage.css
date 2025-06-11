@@ -3,7 +3,7 @@
   --primary: #351701; /* 深棕色 */
   --primary-light: #d8bc96; /* 米色 */
   --primary-dark: #5f2d0b; /* 深棕褐色 */
-  --secondary: #CD853F; /* 棕色 */
+  --secondary: #cd853f; /* 棕色 */
   --text-light: #f9f9e4; /* 米色 */
   --text-dark: #333333; /* 深灰色 */
   --border-radius: 12px;
@@ -161,74 +161,74 @@ main {
 /* 文件上传区 */
 /* 添加新的诗词输入区样式 */
 .poem-input {
-    margin-bottom: 32px;
+  margin-bottom: 32px;
 }
 
 .poem-input h3 {
-    font-size: 18px;
-    font-weight: semibold;
-    color: var(--text-dark);
-    margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: semibold;
+  color: var(--text-dark);
+  margin-bottom: 16px;
 }
 
 .input-group {
-    margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .input-group label {
-    font-weight: medium;
-    margin-bottom: 8px;
-    color: var(--text-dark);
-    display: block;
+  font-weight: medium;
+  margin-bottom: 8px;
+  color: var(--text-dark);
+  display: block;
 }
 
 .input-group input,
 .input-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: var(--border-radius);
-    background-color: white;
-    font-family: inherit;
-    font-size: 16px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  background-color: white;
+  font-family: inherit;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
 .input-group textarea {
-    resize: vertical;
+  resize: vertical;
 }
 
 .input-group input:focus,
 .input-group textarea:focus {
-    outline: none;
-    border-color: var(--secondary);
-    box-shadow: 0 0 0 2px rgba(205, 133, 63, 0.2);
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 2px rgba(205, 133, 63, 0.2);
 }
 
 .submit-btn {
-    background: linear-gradient(to right, var(--primary), var(--primary-light));
-    color: var(--text-light);
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 12px 24px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-top: 8px;
+  background: linear-gradient(to right, var(--primary), var(--primary-light));
+  color: var(--text-light);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 8px;
 }
 
 .submit-btn:hover {
-    background: linear-gradient(to right, var(--primary-dark), var(--primary));
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(to right, var(--primary-dark), var(--primary));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .submit-btn i {
-    margin-right: 8px;
+  margin-right: 8px;
 }
 /* 功能选择区 */
 .function-nav {
@@ -271,7 +271,7 @@ main {
 }
 
 .function-nav button:hover:not(.tab-active) {
-  background: #D2B48C40;
+  background: #d2b48c40;
   transform: translateY(-2px);
 }
 
@@ -290,7 +290,7 @@ main {
 
 /* 智能评分 */
 .scoring-card {
-  background: linear-gradient(to right, #8B4513, #5C3317);
+  background: linear-gradient(to right, #8b4513, #5c3317);
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 24px;
@@ -312,6 +312,41 @@ main {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+  }
+}
+
+/* 调整智能评分模块 */
+#scoring .rating-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+#scoring .rating-item {
+  padding: 8px 12px;
+  margin-bottom: 0;
+}
+
+#scoring .rating-title {
+  margin-bottom: 5px;
+}
+
+#scoring .progress-bar {
+  height: 5px;
+}
+
+#scoring .rating-title span {
+  font-size: 13px;
+}
+
+#scoring .rating-score {
+  font-size: 14px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  #scoring .rating-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -350,13 +385,13 @@ main {
 
 .progress-value {
   height: 100%;
-  background: linear-gradient(to right, #CD853F, #8B4513);
+  background: linear-gradient(to right, #cd853f, #8b4513);
   border-radius: 9999px;
   transition: width 0.7s;
 }
 
 .progress-value.gradient-progress {
-  background: linear-gradient(to right, #D2B48C, #fcfaf8);
+  background: linear-gradient(to right, #d2b48c, #fcfaf8);
 }
 
 .rating-item {
@@ -397,6 +432,57 @@ main {
   color: var(--secondary);
 }
 
+/* 智能评分网格布局 */
+.rating-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.rating-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 新增智能评分紧凑布局 */
+.rating-grid.compact-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.rating-item.compact {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+
+.rating-item.compact .rating-title {
+  margin-bottom: 5px;
+}
+
+.rating-item.compact .progress-bar {
+  height: 5px;
+}
+
+.rating-item.compact .rating-title span {
+  font-size: 13px;
+}
+
+.rating-item.compact .rating-score {
+  font-size: 14px;
+}
+
+/* 移动端单列显示 */
+@media (max-width: 768px) {
+  .rating-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rating-item.compact {
+    padding: 8px;
+  }
+}
+
 /* 读写共生 */
 .reading-title {
   display: flex;
@@ -412,68 +498,52 @@ main {
   margin-right: 8px;
 }
 
-.book-item {
-  display: flex;
+/* 诗词项目样式 */
+.poem-item {
   background-color: var(--text-light);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: all 0.3s;
+  padding: 20px;
   margin-bottom: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.book-item:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  transform: translateY(-4px);
-}
-
-.book-item img {
-  width: 96px;
-  height: 128px;
-  object-fit: cover;
-}
-
-.book-item.hover-effect {
-  transition: var(--transition);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.book-item.hover-effect:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.book-info {
-  padding: 16px;
-  flex: 1;
-}
-
-.book-info h4 {
-  font-weight: semibold;
-  color: var(--text-dark);
-  margin-bottom: 4px;
-}
-
-.book-info p {
-  color: #6c757d;
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-
-.book-rating {
+.poem-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 12px;
 }
 
-.book-rating i {
-  color: #ffc107;
-  font-size: 12px;
+.poem-header h4 {
+  font-size: 18px;
+  color: var(--primary-dark);
+  margin: 0;
 }
 
-.book-rating span {
+.poet {
+  font-size: 14px;
+  color: var(--secondary);
+  font-style: italic;
+}
+
+.poem-content pre {
+  font-family: "楷体", "KaiTi", serif;
+  font-size: 16px;
+  line-height: 2;
+  text-align: center;
+  white-space: pre-wrap;
+  background-color: rgba(210, 180, 140, 0.1);
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.poem-summary p {
+  font-size: 14px;
   color: #6c757d;
-  font-size: 12px;
-  margin-left: 4px;
+  margin-top: 10px;
+  font-style: italic;
+  border-top: 1px dashed #ddd;
+  padding-top: 10px;
 }
 
 /* 动态润色 */
@@ -484,83 +554,107 @@ main {
   margin-bottom: 16px;
 }
 
-.edit-option {
-  display: flex;
-  align-items: center;
+/* 润色容器 */
+.polish-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .polish-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.polish-version {
   background-color: var(--text-light);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 16px;
-  transition: all 0.3s;
-  margin-bottom: 16px;
-  text-decoration: none;
-  color: inherit;
-}
-
-.edit-option:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  transform: translateY(-4px);
-}
-
-.edit-option i {
-  color: var(--secondary);
-  font-size: 24px;
-  margin-right: 12px;
-}
-
-.edit-option span {
-  display: inline-block;
-  background-color: #917065;
-  color: white;
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 9999px;
-  margin-top: 4px;
-}
-
-.edit-option span.bg-blue-500 {
-  background-color: #c4bfb7;
-}
-
-.edit-option.hover-effect {
-  transition: var(--transition);
-  border-left: 4px solid var(--primary);
-}
-
-.edit-option.hover-effect:hover {
-  transform: translateX(5px);
-  border-left: 4px solid var(--secondary);
-}
-
-.filter-options.card-style {
-  background: rgba(210, 180, 140, 0.08);
   border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: var(--transition);
 }
 
-.filter-options {
-  background-color: var(--text-light);
-  border-radius: 8px;
+.polish-version:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.version-header {
   padding: 16px;
+  background: linear-gradient(to right, var(--primary-light), #e7d7c1);
+  border-bottom: 1px solid #d8bc96;
 }
 
-.filter-options label {
+.version-header h4 {
+  margin: 0 0 8px 0;
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.version-meta {
+  font-size: 14px;
+  color: var(--primary);
+}
+
+.version-content {
+  padding: 20px;
+  font-size: 16px;
+  line-height: 2;
+  white-space: pre-wrap;
+  min-height: 200px;
+  font-family: "楷体", "KaiTi", serif;
+  text-align: center; /* 居中显示诗句 */
+
+  /* 精确格子线设计 */
+  background-image:
+    /* 横线格子 */ linear-gradient(
+    to bottom,
+    rgba(210, 180, 140, 0.1) 1px,
+    transparent 1px
+  );
+
+  background-size: 32px 32px; /* 控制格子间距 */
+  background-position: center top; /* 从顶部中心开始 */
+  padding-top: 8px; /* 调整位置使文字落在格子线上 */
+}
+
+/* 润色控制区 */
+.polish-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.polish-btn {
+  background: linear-gradient(to right, var(--primary), var(--primary-dark));
+  color: var(--text-light);
+  border: none;
+  border-radius: 50px;
+  padding: 12px 32px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--transition);
   display: flex;
   align-items: center;
-  cursor: pointer;
-  margin-bottom: 8px;
+  box-shadow: 0 4px 10px rgba(140, 80, 20, 0.3);
 }
 
-.filter-options input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+.polish-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(140, 80, 20, 0.4);
+}
+
+.polish-btn i {
   margin-right: 8px;
 }
 
-.filter-options i {
-  color: var(--secondary);
-  margin-right: 8px;
+.polish-status {
+  color: var(--primary-dark);
+  font-size: 14px;
+  display: none;
 }
 
 /* 底部信息栏 */

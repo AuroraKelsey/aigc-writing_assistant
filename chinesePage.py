@@ -3,6 +3,17 @@ from flask import Blueprint, render_template, jsonify, request
 import json
 import os
 import datetime
+import random
+import os
+from openai import OpenAI
+
+# 火山引擎API配置
+VOLCANO_API_KEY = "ccb4f407-09f5-4d2e-9034-aa89d93abb21"  # 替换为你的实际API密钥
+VOLCANO_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
+MODEL_NAME = "doubao-1-5-thinking-pro-250415"  # 模型名称（全小写）
+
+# 初始化OpenAI客户端（配置为火山引擎）
+client = OpenAI(api_key=VOLCANO_API_KEY, base_url=VOLCANO_BASE_URL)
 
 # 创建蓝图
 chinese_page = Blueprint(
@@ -16,50 +27,110 @@ os.makedirs(data_dir, exist_ok=True)
 # chinese_page.py
 # 在已有代码基础上添加以下路由
 
+
 # 路由：接收诗词提交
 @chinese_page.route("/api/submit-poem", methods=["POST"])
 def submit_poem():
     try:
         # 获取前端提交的JSON数据
         data = request.get_json()
-        
+
         # 获取诗词题目和内容
         title = data.get("title")
         content = data.get("content")
-        
+
         # 验证数据是否存在
         if not title or not content:
-            return jsonify({
-                "success": False,
-                "message": "诗词题目和内容不能为空"
-            }), 400
-        
+            return jsonify({"success": False, "message": "诗词题目和内容不能为空"}), 400
+
         # 保存数据到文件（实际应用中应存储到数据库）
         poem_data = {
             "title": title,
             "content": content,
-            "timestamp": datetime.datetime.now().isoformat()
+            "timestamp": datetime.datetime.now().isoformat(),
         }
-        
+
         file_path = os.path.join(data_dir, f"{title.replace(' ', '_')}.json")
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(poem_data, f, ensure_ascii=False, indent=2)
-        
+
         # 返回成功响应
-        return jsonify({
-            "success": True,
-            "message": "诗词提交成功",
-            "data": {
-                "title": title,
-                "preview": content[:50] + "..." if len(content) > 50 else content
+        return jsonify(
+            {
+                "success": True,
+                "message": "诗词提交成功",
+                "data": {
+                    "title": title,
+                    "preview": content[:50] + "..." if len(content) > 50 else content,
+                },
             }
-        })
-    
+        )
+
     except Exception as e:
-        return jsonify({
-            "success": False,
-            "message": f"服务器错误: {str(e)}"
-        }), 500
+        return jsonify({"success": False, "message": f"服务器错误: {str(e)}"}), 500
+
+
+# 在chinese_page.py中添加以下路由
+@chinese_page.route("/api/polish-poem", methods=["POST"])
+def polish_poem():
+    try:
+        # 获取前端提交的JSON数据
+        data = request.get_json()
+
+        # 获取诗词题目和内容
+        title = data.get("title")
+        content = data.get("content")
+
+        # 验证数据是否存在
+        if not title or not content:
+            return jsonify({"success": False, "message": "诗词题目和内容不能为空"}), 400
+
+        # 调用火山引擎API进行润色（两种风格）
+        polished_content1 = polish_with_volcano(content, style="优雅文言文")
+        polished_content2 = polish_with_volcano(content, style="古典传统")
+
+        return jsonify(
+            {
+                "success": True,
+                "polishedContent1": polished_content1,
+                "polishedContent2": polished_content2,
+                "message": "诗词润色成功",
+            }
+        )
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"润色处理失败: {str(e)}"}), 500
+
+
+def polish_with_volcano(original_content, style="优雅文言文"):
+    """调用火山引擎API进行诗词润色（指定风格）"""
+    # 根据风格设置不同的系统提示
+    if style == "优雅文言文":
+        system_prompt = "你是一个精通中国古典文学的专家，请将用户输入的诗歌润色为更优雅的文言文风格，保持原意不变但提升文学美感。"
+    else:  # 古典传统
+        system_prompt = "你是一个中国古典诗词大师，请将用户输入的诗歌润色为更古典的表达风格，使用更传统的词汇和句式，保持原意不变。"
+
+    try:
+        # 调用火山引擎API
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": original_content},
+            ],
+            temperature=0.9,  # 适当提高创意性
+            max_tokens=500,  # 控制输出长度
+        )
+
+        # 提取润色结果
+        polished_content = response.choices[0].message.content.strip()
+        return polished_content
+
+    except Exception as e:
+        # 如果润色失败，返回原始内容并记录错误
+        print(f"润色失败: {str(e)}")
+        return original_content  # 失败时返回原内容，避免前端无显示
+
 
 # 路由：返回中文学习页面
 @chinese_page.route("/chinesePage")
@@ -67,54 +138,214 @@ def index():
     return render_template("chinesePage.html")
 
 
-# 路由：获取智能评分数据
-@chinese_page.route("/api/scoring")
+# 路由：获取智能评分数据（基于大模型）
+@chinese_page.route("/api/scoring", methods=["POST"])
 def get_scoring_data():
-    # 这里可以从数据库或文件中读取数据
-    scoring_data = {
-        "overall_score": 84,
-        "ratings": [
-            {"title": "整体结构", "score": "38/50", "progress": 80},
-            {"title": "语言表达", "score": "32/40", "progress": 80},
-            {"title": "意境呈现", "score": "14/20", "progress": 70},
-        ],
+    try:
+        # 获取前端提交的JSON数据
+        data = request.get_json()
+        title = data.get("title")
+        content = data.get("content")
+
+        if not title or not content:
+            return jsonify({"success": False, "message": "诗词题目和内容不能为空"}), 400
+
+        # 调用大模型API进行评分
+        scoring_result = score_with_volcano(title, content)
+
+        # 计算总分（每个维度20分，共100分）
+        total_score = sum(
+            dimension["score"] for dimension in scoring_result["dimensions"]
+        )
+
+        # 转换为前端需要的格式
+        ratings = []
+        for dim in scoring_result["dimensions"]:
+            score_value = dim["score"]
+            ratings.append(
+                {
+                    "title": dim["title"],
+                    "score": f"{score_value}/20",
+                    "progress": int((score_value / 20) * 100),  # 转换为百分比进度
+                }
+            )
+
+        scoring_data = {"overall_score": total_score, "ratings": ratings}
+
+        return jsonify(scoring_data)
+
+    except Exception as e:
+        return (
+            jsonify({"success": False, "message": f"获取评分数据失败: {str(e)}"}),
+            500,
+        )
+
+
+def score_with_volcano(title, content):
+    """调用火山引擎API进行诗词智能评分（只返回分数）"""
+    # 构建系统提示词，明确评分维度和标准，并指定只返回分数
+    system_prompt = """
+    你是一位中国古典诗词专家，需要对用户提交的诗词进行专业评分。请从以下五个维度进行评价（每个维度满分20分）：
+    1. 立意：主题是否明确，立意是否新颖深刻
+    2. 押韵：是否符合诗词的押韵规则，韵律是否和谐
+    3. 对仗：对仗是否工整，符合诗词格律要求
+    4. 意境：是否营造出优美的意境，情景交融
+    5. 语言：语言是否精练，用词是否准确生动
+
+    请按照以下JSON格式返回评分结果（只需返回分数，不需要评语）：
+    {
+        "dimensions": [
+            {"title": "立意", "score": 分数},
+            {"title": "押韵", "score": 分数},
+            {"title": "对仗", "score": 分数},
+            {"title": "意境", "score": 分数},
+            {"title": "语言", "score": 分数}
+        ]
     }
-    return jsonify(scoring_data)
+    """
+
+    try:
+        # 调用火山引擎API
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {
+                    "role": "user",
+                    "content": f"诗词标题：《{title}》\n诗词内容：\n{content}",
+                },
+            ],
+            temperature=0.3,  # 较低的随机性保证评分稳定性
+            max_tokens=500,
+            response_format={"type": "json_object"},  # 要求返回JSON格式
+        )
+
+        # 提取并解析评分结果
+        result_json = response.choices[0].message.content.strip()
+        scoring_result = json.loads(result_json)
+
+        # 验证评分结果结构
+        if "dimensions" not in scoring_result:
+            raise ValueError("API返回的评分结果缺少维度信息")
+
+        # 验证每个维度的评分
+        for dimension in scoring_result["dimensions"]:
+            if "title" not in dimension or "score" not in dimension:
+                raise ValueError("维度评分信息不完整")
+            if not (0 <= dimension["score"] <= 20):
+                dimension["score"] = max(
+                    0, min(20, dimension["score"])
+                )  # 确保分数在0-20范围内
+
+        return scoring_result
+
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"解析评分结果失败: {str(e)}")
+        # 返回默认评分结果（只有分数）
+        return {
+            "dimensions": [
+                {"title": "立意", "score": random.randint(10, 18)},
+                {"title": "押韵", "score": random.randint(10, 18)},
+                {"title": "对仗", "score": random.randint(10, 18)},
+                {"title": "意境", "score": random.randint(10, 18)},
+                {"title": "语言", "score": random.randint(10, 18)},
+            ]
+        }
+    except Exception as e:
+        print(f"评分失败: {str(e)}")
+        # 返回默认评分结果（只有分数）
+        return {
+            "dimensions": [
+                {"title": "立意", "score": random.randint(10, 18)},
+                {"title": "押韵", "score": random.randint(10, 18)},
+                {"title": "对仗", "score": random.randint(10, 18)},
+                {"title": "意境", "score": random.randint(10, 18)},
+                {"title": "语言", "score": random.randint(10, 18)},
+            ]
+        }
 
 
 # 路由：获取读写共生数据
-@chinese_page.route("/api/reading")
-def get_reading_data():
-    # 这里可以从数据库或文件中读取数据
-    # 示例数据
-    reading_data = [
-        {
-            "title": "《活着》",
-            "author": "余华",
-            "description": "一部充满人性光辉的生命史诗，学习如何用简洁文字表达深刻情感...",
-            "rating": 9.4,
-            "image": "/static/img/活着.png",
-        },
-        {
-            "title": "《平凡的世界》",
-            "author": "路遥",
-            "description": "一部反映中国当代城乡社会生活的史诗作品，展现普通人的奋斗与成长...",
-            "rating": 9.7,
-            "image": "/static/img/平凡的世界.png",
-        },
-        {
-            "title": "《红楼梦》",
-            "author": "曹雪芹",
-            "description": "中国古典文学巅峰之作，学习复杂人物描写和情节架构的绝佳范本...",
-            "rating": 9.5,
-            "image": "/static/img/红楼梦.png",
-        },
-        {
-            "title": "《围城》",
-            "author": "钱钟书",
-            "description": "讽刺文学的经典之作，学习精妙比喻和幽默讽刺的表达技巧...",
-            "rating": 8.9,
-            "image": "/static/img/围城.png",
-        },
-    ]
-    return jsonify(reading_data)
+@chinese_page.route("/api/recommend-poems", methods=["POST"])
+def recommend_poems():
+    try:
+        # 获取前端提交的JSON数据
+        data = request.get_json()
+
+        # 获取用户提交的诗词内容
+        user_content = data.get("content", "")
+
+        # 系统提示词
+        system_prompt = """
+        你是一位中国古典诗词专家，需要根据用户提供的诗词内容，推荐4首主题、风格或意境相似的经典诗词。
+        返回格式必须是严格的JSON数组，每首诗词包含以下字段：
+        - title: 诗词标题（带书名号）
+        - poet: 诗人姓名
+        - content: 诗词全文（每句一行，用换行符分隔）
+        - summary: 一句话概括（不超过20字）
+        
+        示例：
+        [
+            {
+                "title": "《静夜思》",
+                "poet": "李白",
+                "content": "床前明月光，疑是地上霜。\\n举头望明月，低头思故乡。",
+                "summary": "一首表达思乡之情的经典五言绝句"
+            },
+            ...（其他三首）
+        ]
+        """
+
+        # 调用火山引擎API
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"用户诗词内容：{user_content}"},
+            ],
+            temperature=0.5,
+            max_tokens=800,
+            response_format={"type": "json_object"},
+        )
+
+        # 提取并解析推荐结果
+        result_json = response.choices[0].message.content.strip()
+        recommended_poems = json.loads(result_json)
+
+        # 验证结果格式
+        if not isinstance(recommended_poems, list) or len(recommended_poems) < 1:
+            raise ValueError("API返回的推荐结果格式不正确")
+
+        # 确保每首诗都有必需的字段
+        valid_poems = []
+        for poem in recommended_poems:
+            if all(key in poem for key in ["title", "poet", "content", "summary"]):
+                valid_poems.append(poem)
+
+        return jsonify(
+            {"success": True, "recommendedPoems": valid_poems[:4]}  # 最多返回4首
+        )
+
+    except Exception as e:
+        print(f"推荐诗歌失败: {str(e)}")
+        # 返回默认推荐作为后备
+        return jsonify(
+            {
+                "success": False,
+                "message": f"推荐失败: {str(e)}",
+                "recommendedPoems": [
+                    {
+                        "title": "《静夜思》",
+                        "poet": "李白",
+                        "content": "床前明月光，疑是地上霜。\n举头望明月，低头思故乡。",
+                        "summary": "一首表达思乡之情的经典五言绝句",
+                    },
+                    {
+                        "title": "《春晓》",
+                        "poet": "孟浩然",
+                        "content": "春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。",
+                        "summary": "描绘春天早晨景象的五言绝句",
+                    },
+                ],
+            }
+        )

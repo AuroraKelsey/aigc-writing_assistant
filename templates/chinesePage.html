@@ -67,21 +67,58 @@
                 <!-- 功能导航栏 - 移动端优化为标签页 -->
                 <div class="function-nav">
                     <ul>
-                        <button class="tab-btn tab-active glow" data-target="scoring">
+                        <button class="tab-btn tab-active glow" data-target="editing">
+                            <i class="fas fa-magic"></i> 动态润色
+                        </button>
+                        <button class="tab-btn " data-target="scoring">
                             <i class="fas fa-star"></i> 智能评分
                         </button>
                         <button class="tab-btn" data-target="reading">
                             <i class="fas fa-book-open"></i> 读写共生
                         </button>
-                        <button class="tab-btn" data-target="editing">
-                            <i class="fas fa-magic"></i> 动态润色
-                        </button>
                     </ul>
                 </div>
                 <!-- 功能子页面 -->
                 <div class="subpage-container">
+
+                    <!-- 动态润色 -->
+                    <div id="editing" class="subpage block">
+                        <h3 class="edit-title">润色引擎</h3>
+                        <div class="polish-container">
+                            <!-- 润色版本1 -->
+                            <div class="polish-version">
+                                <div class="version-header">
+                                    <h4>润色版本一</h4>
+                                    <div class="version-meta">
+                                        <span id="version1Title">等待润色...</span>
+                                    </div>
+                                </div>
+                                <div id="polishedVersion1" class="version-content"></div>
+                            </div>
+
+                            <!-- 润色版本2 -->
+                            <div class="polish-version">
+                                <div class="version-header">
+                                    <h4>润色版本二</h4>
+                                    <div class="version-meta">
+                                        <span id="version2Title">等待润色...</span>
+                                    </div>
+                                </div>
+                                <div id="polishedVersion2" class="version-content"></div>
+                            </div>
+                        </div>
+
+                        <div class="polish-controls">
+                            <button id="regeneratePolish" class="polish-btn">
+                                <i class="fas fa-sync-alt"></i> 重新润色
+                            </button>
+                            <div class="polish-status" id="polishStatus">
+                                <i class="fas fa-spinner fa-spin"></i> 正在润色中...
+                            </div>
+                        </div>
+                    </div>
                     <!-- 智能评分 -->
-                    <div id="scoring" class="subpage block">
+                    <div id="scoring" class="subpage">
                         <div class="scoring-card gradient-bg">
                             <div class="score-info">
                                 <div class="score-text">
@@ -100,42 +137,6 @@
                             </div>
                         </div>
                         <div class="rating-list">
-                            <div class="rating-item hover-effect">
-                                <div class="rating-title">
-                                    <div>
-                                        <i class="fas fa-book-open"></i>
-                                        <span>整体结构</span>
-                                    </div>
-                                    <span class="rating-score">40/50</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-value" style="width: 80%"></div>
-                                </div>
-                            </div>
-                            <div class="rating-item hover-effect">
-                                <div class="rating-title">
-                                    <div>
-                                        <i class="fas fa-pen-fancy"></i>
-                                        <span>语言表达</span>
-                                    </div>
-                                    <span class="rating-score">32/40</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-value" style="width: 80%"></div>
-                                </div>
-                            </div>
-                            <div class="rating-item hover-effect">
-                                <div class="rating-title">
-                                    <div>
-                                        <i class="fas fa-lightbulb"></i>
-                                        <span>意境呈现</span>
-                                    </div>
-                                    <span class="rating-score">14/20</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-value" style="width: 70%"></div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <!-- 读写共生 -->
@@ -143,47 +144,8 @@
                         <h3 class="reading-title">
                             <i class="fas fa-book-open"></i> 推荐阅读诗文
                         </h3>
-                        <div class="book-list">
-                        </div>
-                    </div>
-                    <!-- 动态润色 -->
-                    <div id="editing" class="subpage">
-                        <h3 class="edit-title">润色引擎</h3>
-                        <div class="edit-options">
-                            <a href="#基础润色" class="edit-option hover-effect">
-                                <i class="fas fa-paint-brush"></i>
-                                <div>
-                                    <div>基础润色</div>
-                                    <span>推荐</span>
-                                </div>
-                            </a>
-                            <a href="#句式优化" class="edit-option hover-effect">
-                                <i class="fas fa-project-diagram"></i>
-                                <div>
-                                    <div>句式优化</div>
-                                    <span class="bg-blue-500">NEW</span>
-                                </div>
-                            </a>
-                            <div class="filter-options">
-                                <div>建议筛选：</div>
-                                <div>
-                                    <label>
-                                        <input type="checkbox" checked>
-                                        <i class="fas fa-spell-check"></i>
-                                        <span>语法修正</span>
-                                    </label>
-                                    <label>
-                                        <input type="checkbox" checked>
-                                        <i class="fas fa-bolt"></i>
-                                        <span>表达升级</span>
-                                    </label>
-                                    <label>
-                                        <input type="checkbox">
-                                        <i class="fas fa-shapes"></i>
-                                        <span>修辞优化</span>
-                                    </label>
-                                </div>
-                            </div>
+                        <div class="poem-list">
+                            <!-- 动态生成的诗词项目 -->
                         </div>
                     </div>
                 </div>
