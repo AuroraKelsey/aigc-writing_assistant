@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>文言文分析 - AI写作助手</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #2c5282);
+            color: white;
+            padding: 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 主体内容区 */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        /* 输入区域 */
+        .input-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-section h3 {
+            margin-bottom: 1rem;
+        }
+
+        .input-section textarea {
+            width: 100%;
+            height: 500px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            resize: none;
+            margin-bottom: 1rem;
+        }
+
+        .analyze-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .analyze-btn:hover {
+            background-color: #357abd;
+        }
+
+        /* 结果区域 */
+        .result-section {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .function-nav {
+            margin-bottom: 0.5rem;
+            display: flex;
+            gap: 5rem;
+            /* border-bottom: 1px solid var(--border-color); */
+            /* padding-bottom: 1rem; */
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            color: var(--text-color);
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .result-content {
+            height: 500px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-scroll {
+            height: 100%;
+            overflow-y: auto;
+            padding: 1rem;
+            position: relative;
+        }
+
+        /* 自定义滚动条样式 */
+        .content-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .content-scroll::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .content-scroll::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* 标签页内容样式 */
+        .tab-content {
+            display: none;
+            height: 100%;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 翻译列表样式 */
+        .translation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .translation-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .translation-item .original {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .translation-item .translation {
+            color: #666;
+        }
+
+        /* 字词解释样式 */
+        .words-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .words-section {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+
+        .words-section h5 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .word-item {
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* 主旨分析样式 */
+        .theme-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .theme-section {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+
+        .theme-section h5 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .theme-content {
+            line-height: 1.6;
+            color: #444;
+        }
+
+        /* 加载动画样式 */
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .loading i {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading p {
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* 错误提示 */
+        .error-messages {
+            margin-top: 1rem;
+        }
+
+        .error-message {
+            display: none;
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 0.8rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .error-message:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .result-content {
+                min-height: 300px;
+                max-height: 500px;
+            }
+        }
+
+        /* 主题标题样式 */
+        .main-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 0;
+        }
+
+        .main-title h2 {
+            font-size: 2rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .main-title p {
+            font-size: 1.1rem;
+            color: #666;
+            margin: 0;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .main-title {
+                padding: 1rem 0;
+            }
+
+            .main-title h2 {
+                font-size: 1.5rem;
+            }
+
+            .main-title p {
+                font-size: 1rem;
+            }
+        }
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-book"></i>
+                <span>文言文分析</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/"><i class="fas fa-home"></i> 首页</a>
+                <a href="/chinesePage"><i class="fas fa-pen"></i> 诗词创作</a>
+                <a href="/draw"><i class="fas fa-palette"></i> 素材库</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主体内容区 -->
+    <main class="main-content">
+        <!-- 主题标题 -->
+        <div class="main-title">
+            <h2>AI赋能，赏析古代文言经典</h2>
+            <p>无需注册，直接粘贴文言文内容即可体验AI智能分析</p>
+        </div>
+        <div class="content-wrapper">
+            <!-- 左侧输入区域 -->
+            <section class="input-section">
+                <h3>输入文言文</h3>
+                <textarea id="classicalText" placeholder="在此粘贴文言文内容..."></textarea>
+                <button id="analyzeBtn" class="analyze-btn">
+                    <i class="fas fa-magic"></i> 开始分析
+                </button>
+            </section>
+
+            <!-- 右侧结果区域 -->
+            <section class="result-section">
+                <div class="function-nav">
+                    <button class="tab-btn active" data-target="translation">
+                        <i class="fas fa-language"></i> 逐句翻译
+                    </button>
+                    <button class="tab-btn" data-target="words">
+                        <i class="fas fa-book"></i> 重点字词
+                    </button>
+                    <button class="tab-btn" data-target="theme">
+                        <i class="fas fa-lightbulb"></i> 主旨分析
+                    </button>
+                </div>
+
+                <!-- 结果内容区域 -->
+                <div class="result-content">
+                    <!-- 逐句翻译 -->
+                    <div id="translationResult" class="tab-content active">
+                        <div class="content-scroll">
+                            <div class="translation-list"></div>
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>正在翻译中...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 重点字词 -->
+                    <div id="wordsResult" class="tab-content">
+                        <div class="content-scroll">
+                            <div class="words-list"></div>
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>正在分析字词...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 主旨分析 -->
+                    <div id="themeResult" class="tab-content">
+                        <div class="content-scroll">
+                            <div class="theme-list"></div>
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>正在分析主旨...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 错误信息区域 -->
+                <div class="error-messages">
+                    <div id="translationError" class="error-message"></div>
+                    <div id="wordsError" class="error-message"></div>
+                    <div id="themeError" class="error-message"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // 显示错误信息
+        function showError(module, message) {
+            const errorDiv = document.getElementById(module + 'Error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // 隐藏错误信息
+        function hideErrors() {
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.style.display = 'none';
+            });
+        }
+
+        // 清除结果
+        function clearResults() {
+            document.querySelector('.translation-list').innerHTML = '';
+            document.querySelector('.words-list').innerHTML = '';
+            document.querySelector('.theme-list').innerHTML = '';
+        }
+
+        // 切换标签页
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有活动状态
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // 添加当前活动状态
+                button.classList.add('active');
+                const target = button.dataset.target;
+                document.getElementById(target + 'Result').classList.add('active');
+            });
+        });
+
+        // 分析按钮点击事件
+        document.getElementById('analyzeBtn').addEventListener('click', async function() {
+            const content = document.getElementById('classicalText').value;
+            if (!content) {
+                showError('translation', '请输入文言文内容');
+                return;
+            }
+
+            // 清除之前的错误和结果
+            hideErrors();
+            clearResults();
+
+            // 显示所有模块的加载动画
+            document.querySelectorAll('.loading').forEach(loading => {
+                loading.style.display = 'block';
+            });
+            
+            try {
+                // 并行处理三个请求
+                const [translationResponse, wordsResponse, themeResponse] = await Promise.all([
+                    // 翻译请求
+                    fetch('/api/translate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content })
+                    }),
+                    // 字词解释请求
+                    fetch('/api/explain-words', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content })
+                    }),
+                    // 主旨分析请求
+                    fetch('/api/analyze-theme', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content })
+                    })
+                ]);
+
+                // 处理翻译结果
+                const translationData = await translationResponse.json();
+                if (translationData.success) {
+                    handleTranslationResult(translationData);
+                } else {
+                    showError('translation', translationData.message || '翻译失败');
+                }
+
+                // 处理字词解释结果
+                const wordsData = await wordsResponse.json();
+                if (wordsData.success) {
+                    handleWordsResult(wordsData);
+                } else {
+                    showError('words', wordsData.message || '字词解释失败');
+                }
+
+                // 处理主旨分析结果
+                const themeData = await themeResponse.json();
+                if (themeData.success) {
+                    handleThemeResult(themeData);
+                } else {
+                    showError('theme', themeData.message || '主旨分析失败');
+                }
+
+            } catch (error) {
+                console.error('分析失败:', error);
+                showError('translation', '分析过程中出现错误，请稍后重试');
+            } finally {
+                // 隐藏所有加载动画
+                document.querySelectorAll('.loading').forEach(loading => {
+                    loading.style.display = 'none';
+                });
+            }
+        });
+
+        // 处理翻译结果
+        function handleTranslationResult(data) {
+            const translationList = document.querySelector('.translation-list');
+            if (data.translation) {
+                translationList.innerHTML = `
+                    <div class="translation-item">
+                        <div class="translation">${data.translation}</div>
+                    </div>
+                `;
+            } else {
+                translationList.innerHTML = '<div class="text-center">暂无翻译结果</div>';
+            }
+        }
+
+        // 处理字词解释结果
+        function handleWordsResult(result) {
+            const wordsList = document.querySelector('.words-list');
+            let html = '';
+
+            // 检查是否有result字段
+            const data = result.result || result;
+
+            if (data.phonetic_substitutions && data.phonetic_substitutions.length > 0) {
+                html += `
+                    <div class="words-section">
+                        <h5>通假字</h5>
+                        ${data.phonetic_substitutions.map(item => `
+                            <div class="word-item">
+                                <strong>${item.word}</strong> 通 <strong>${item.original}</strong>
+                                <div>${item.explanation}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            if (data.semantic_shifts && data.semantic_shifts.length > 0) {
+                html += `
+                    <div class="words-section">
+                        <h5>古今异义词</h5>
+                        ${data.semantic_shifts.map(item => `
+                            <div class="word-item">
+                                <strong>${item.word}</strong>
+                                <div>古义：${item.ancient_meaning}</div>
+                                <div>今义：${item.modern_meaning}</div>
+                                <div>${item.explanation}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            if (data.functional_shifts && data.functional_shifts.length > 0) {
+                html += `
+                    <div class="words-section">
+                        <h5>词类活用</h5>
+                        ${data.functional_shifts.map(item => `
+                            <div class="word-item">
+                                <strong>${item.word}</strong>
+                                <div>原词性：${item.original_pos}</div>
+                                <div>活用为：${item.shifted_pos}</div>
+                                <div>${item.explanation}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            if (data.special_sentence_patterns && data.special_sentence_patterns.length > 0) {
+                html += `
+                    <div class="words-section">
+                        <h5>特殊句式</h5>
+                        ${data.special_sentence_patterns.map(item => `
+                            <div class="word-item">
+                                <strong>${item.type}</strong>
+                                <div>例句：${item.example}</div>
+                                <div>${item.explanation}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            wordsList.innerHTML = html || '<div class="text-center">暂无字词解释</div>';
+        }
+
+        // 处理主旨分析结果
+        function handleThemeResult(result) {
+            const themeList = document.querySelector('.theme-list');
+            const data = result.analysis || result;
+            
+            if (data && (data.main_theme || data.artistic_features || data.historical_background)) {
+                themeList.innerHTML = `
+                    <div class="theme-section">
+                        <h5>中心思想</h5>
+                        <div class="theme-content">${data.main_theme || '暂无内容'}</div>
+                    </div>
+                    <div class="theme-section">
+                        <h5>艺术特色</h5>
+                        <div class="theme-content">${data.artistic_features || '暂无内容'}</div>
+                    </div>
+                    <div class="theme-section">
+                        <h5>历史背景</h5>
+                        <div class="theme-content">${data.historical_background || '暂无内容'}</div>
+                    </div>
+                `;
+            } else {
+                themeList.innerHTML = '<div class="text-center">暂无主旨分析结果</div>';
+            }
+        }
+    </script>
+</body>
+</html> 
