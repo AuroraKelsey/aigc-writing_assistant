@@ -19,6 +19,24 @@
                 <i class="fas fa-pen-nib"></i>
                 <span>诗词少年</span>
             </div>
+            <!-- 导航菜单 -->
+            <nav class="nav-menu">
+                <a href="/">首页</a>
+                <a href="/chinesePage" class="text-primary">诗词创作</a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle">
+                        <i class="fas fa-book"></i> 文言文
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="/classicalChinese" class="dropdown-item">
+                            <i class="fas fa-language"></i> 文言文分析
+                        </a>
+                    </div>
+                </div>
+                <a href="/draw">素材库</a>
+                <a href="/login" class="bg-primary">登录/注册</a>
+            </nav>
             <!-- 汉堡菜单按钮 -->
             <button id="menuToggle">
                 <i class="fas fa-bars"></i>
@@ -29,6 +47,7 @@
             <div class="mobile-menu-container">
                 <a href="/">首页</a>
                 <a href="/chinesePage" class="text-primary">诗词创作</a>
+                <a href="/classicalChinese">文言文分析</a>
                 <a href="/draw">素材库</a>
                 <a href="/login" class="bg-primary">登录/注册</a>
             </div>
@@ -165,6 +184,118 @@
         </div>
     </footer>
     <script src="../static/js/chinesePage.js"></script>
+    <style>
+        /* 导航菜单样式 */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* 下拉菜单样式 */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            z-index: 1000;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            #mobileMenu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: white;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                padding: 1rem;
+            }
+
+            #mobileMenu.active {
+                display: block;
+            }
+
+            .mobile-menu-container {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .mobile-menu-container a {
+                padding: 0.8rem;
+                border-radius: 4px;
+                text-decoration: none;
+                color: var(--text-color);
+                transition: background-color 0.3s ease;
+            }
+
+            .mobile-menu-container a:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+        }
+    </style>
+
+    <script>
+        // 移动端菜单切换
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        });
+    </script>
 </body>
 
 </html>
